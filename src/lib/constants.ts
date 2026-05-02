@@ -39,6 +39,8 @@ export const SUBJECTS = [
   "Astronomie",
   "Recht",
   "Mediendesign",
+  "Kunst",
+  "Psychologie Wahlpflichtfach",
 ] as const;
 
 export type Subject = (typeof SUBJECTS)[number];
