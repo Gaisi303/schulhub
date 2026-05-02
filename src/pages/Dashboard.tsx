@@ -130,7 +130,7 @@ export default function Dashboard() {
         </div>
 
         {/* Meal reminder card */}
-        <MealCard />
+        {mealEnabled && <MealCard />}
 
         {/* Today + Upcoming */}
         <div className="grid lg:grid-cols-2 gap-6">
