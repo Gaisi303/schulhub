@@ -355,7 +355,7 @@ export function LernChatPage() {
   const isBusy = loading || genBusy !== null;
 
   return (
-    <div className="max-w-7xl mx-auto h-[calc(100vh-7.5rem)] md:h-[calc(100vh-8.5rem)] flex gap-4">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-7.5rem)] md:h-[calc(100vh-8.5rem)] flex gap-4 min-w-0 overflow-x-hidden">
       {/* Sessions sidebar (hidden on small) */}
       <aside className="hidden md:flex w-64 shrink-0 flex-col glass rounded-2xl overflow-hidden">
         <div className="p-3 border-b border-border/50 flex items-center justify-between gap-2">
