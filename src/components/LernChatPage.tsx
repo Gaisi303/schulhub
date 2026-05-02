@@ -634,6 +634,24 @@ function MessageBubble({ msg }: { msg: Msg }) {
   );
 }
 
+async function downloadAttachment(url: string, filename: string) {
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+  } catch {
+    window.open(url, "_blank");
+  }
+}
+
 function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
   const Icon = att.kind === "image" ? FileImage : att.kind === "pptx" ? Presentation : FileText;
 
@@ -642,15 +660,16 @@ function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
     return (
       <div className="space-y-1.5">
         <img src={att.downloadUrl} alt={att.name} className="rounded-lg max-h-80 w-full object-cover" />
-        <a
-          href={att.downloadUrl} download={att.name}
+        <button
+          type="button"
+          onClick={() => downloadAttachment(att.downloadUrl, att.name)}
           className={cn(
             "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors",
             dark ? "bg-white/20 hover:bg-white/30" : "bg-muted hover:bg-muted/80"
           )}
         >
           <Download className="h-3 w-3" /> Bild speichern
-        </a>
+        </button>
       </div>
     );
   }
@@ -669,10 +688,11 @@ function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
   }
 
   return (
-    <a
-      href={att.downloadUrl} download={att.name}
+    <button
+      type="button"
+      onClick={() => downloadAttachment(att.downloadUrl, att.name)}
       className={cn(
-        "flex items-center gap-2 text-xs px-3 py-2 rounded-lg border transition-colors",
+        "flex items-center gap-2 text-xs px-3 py-2 rounded-lg border transition-colors text-left w-full",
         dark
           ? "border-white/30 bg-white/10 hover:bg-white/20"
           : "border-border/50 bg-background hover:bg-muted"
@@ -689,7 +709,7 @@ function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
         <div className={cn("text-[10px] opacity-70")}>{att.kind === "pptx" ? "PowerPoint" : "Word-Dokument"}</div>
       </div>
       <Download className="h-3.5 w-3.5 shrink-0 opacity-70" />
-    </a>
+    </button>
   );
 }
 
