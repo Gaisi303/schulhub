@@ -33,6 +33,7 @@ export default function Progress() {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [search, setSearch] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [examSubject, setExamSubject] = useState<string | null>(null);
 
   const load = async () => {
     if (!user) return;
