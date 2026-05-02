@@ -89,7 +89,7 @@ export type Database = {
       subject_progress: {
         Row: {
           created_at: string
-          current_grade: number
+          current_grade: number | null
           id: string
           subject: string
           updated_at: string
@@ -97,7 +97,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          current_grade?: number
+          current_grade?: number | null
           id?: string
           subject: string
           updated_at?: string
@@ -105,7 +105,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          current_grade?: number
+          current_grade?: number | null
           id?: string
           subject?: string
           updated_at?: string
