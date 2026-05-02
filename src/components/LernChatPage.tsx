@@ -461,7 +461,7 @@ export function LernChatPage() {
         </div>
 
         {/* Messages */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 space-y-4">
           {messages.length === 0 ? (
             <EmptyState onPick={(s) => setInput(s)} />
           ) : (
