@@ -75,7 +75,7 @@ export function MealCard() {
       <div className="flex gap-2 shrink-0 w-full sm:w-auto">
         {!done && (
           <Button asChild size="sm" variant="outline" className="flex-1 sm:flex-none">
-            <a href={MEAL_URL} target="_blank" rel="noreferrer">
+            <a href={url} target="_blank" rel="noreferrer">
               Bestellen <ExternalLink className="ml-1 h-3 w-3" />
             </a>
           </Button>
