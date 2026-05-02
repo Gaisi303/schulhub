@@ -7,6 +7,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { TaskCard, type Task } from "@/components/TaskCard";
 import { MealCard } from "@/components/MealCard";
+import { useMealReminder } from "@/hooks/useMealReminder";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { TIMETABLE_URL } from "@/lib/constants";
