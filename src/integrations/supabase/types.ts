@@ -65,6 +65,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          meal_reminder_enabled: boolean
           updated_at: string
           user_id: string
         }
@@ -73,6 +74,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          meal_reminder_enabled?: boolean
           updated_at?: string
           user_id: string
         }
@@ -81,6 +83,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          meal_reminder_enabled?: boolean
           updated_at?: string
           user_id?: string
         }
