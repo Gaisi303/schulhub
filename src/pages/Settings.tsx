@@ -114,6 +114,42 @@ export default function Settings() {
             </div>
             <Switch checked={mealEnabled} onCheckedChange={toggleMeal} />
           </div>
+
+          {mealEnabled && (
+            <div className="space-y-2 pt-3 border-t border-border/50">
+              <Label htmlFor="meal-url" className="text-sm">Essensanmeldung-Link</Label>
+              <p className="text-xs text-muted-foreground">
+                Eigene URL für die Bestellseite. Leer = Standard ({new URL(MEAL_URL).hostname}).
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  id="meal-url"
+                  type="url"
+                  placeholder={MEAL_URL}
+                  value={mealUrl}
+                  onChange={(e) => setMealUrl(e.target.value)}
+                />
+                <Button
+                  onClick={saveMealUrl}
+                  disabled={savingMealUrl}
+                  variant="outline"
+                  className="shrink-0"
+                >
+                  {savingMealUrl ? "…" : "Speichern"}
+                </Button>
+              </div>
+              {mealUrl.trim() && (
+                <a
+                  href={mealUrl.trim()}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  Link testen <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="glass rounded-2xl p-6 space-y-4">
