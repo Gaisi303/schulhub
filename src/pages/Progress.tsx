@@ -345,7 +345,7 @@ export default function Progress() {
                         setExamSubject(p.subject);
                       }
                     }}
-                    className="glass rounded-2xl p-4 sm:p-5 relative group cursor-pointer hover:ring-1 hover:ring-primary/40 transition-all"
+                    className="glass rounded-2xl p-4 sm:p-5 relative group cursor-pointer"
                   >
                     <button
                       onClick={(e) => { e.stopPropagation(); removeSubject(p.id, p.subject); }}
