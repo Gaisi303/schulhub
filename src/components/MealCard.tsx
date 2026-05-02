@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 export function MealCard() {
   const { user } = useAuth();
+  const { url } = useMealReminder();
   const [done, setDone] = useState<boolean | null>(null);
   const nextMonday = addWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), 1);
   const nextWeekStart = format(nextMonday, "yyyy-MM-dd");
