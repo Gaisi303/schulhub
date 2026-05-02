@@ -355,7 +355,7 @@ export function LernChatPage() {
   const isBusy = loading || genBusy !== null;
 
   return (
-    <div className="max-w-7xl mx-auto h-[calc(100vh-7.5rem)] md:h-[calc(100vh-8.5rem)] flex gap-4">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-7.5rem)] md:h-[calc(100vh-8.5rem)] flex gap-4 min-w-0 overflow-x-hidden">
       {/* Sessions sidebar (hidden on small) */}
       <aside className="hidden md:flex w-64 shrink-0 flex-col glass rounded-2xl overflow-hidden">
         <div className="p-3 border-b border-border/50 flex items-center justify-between gap-2">
@@ -461,7 +461,7 @@ export function LernChatPage() {
         </div>
 
         {/* Messages */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 space-y-4">
           {messages.length === 0 ? (
             <EmptyState onPick={(s) => setInput(s)} />
           ) : (
@@ -600,7 +600,7 @@ function MessageBubble({ msg }: { msg: Msg }) {
       )}
       <div
         className={cn(
-          "max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm space-y-2",
+          "min-w-0 max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm space-y-2 overflow-hidden break-words",
           msg.role === "user"
             ? "bg-gradient-primary text-primary-foreground rounded-br-sm"
             : "bg-card border border-border/50 rounded-bl-sm"
@@ -614,7 +614,7 @@ function MessageBubble({ msg }: { msg: Msg }) {
           </div>
         )}
         {msg.role === "assistant" ? (
-          <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-pre:my-2 prose-ul:my-1 prose-ol:my-1 prose-headings:my-2 prose-code:text-xs">
+          <div className="prose prose-sm dark:prose-invert max-w-none break-words prose-p:my-1 prose-pre:my-2 prose-pre:whitespace-pre-wrap prose-pre:break-words prose-code:text-xs prose-code:break-words prose-ul:my-1 prose-ol:my-1 prose-headings:my-2 prose-img:max-w-full prose-img:h-auto">
             {text ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
               : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           </div>
