@@ -336,11 +336,20 @@ export default function Progress() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: idx * 0.02 }}
-                    className="glass rounded-2xl p-4 sm:p-5 relative group"
+                    onClick={() => setExamSubject(p.subject)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setExamSubject(p.subject);
+                      }
+                    }}
+                    className="glass rounded-2xl p-4 sm:p-5 relative group cursor-pointer hover:ring-1 hover:ring-primary/40 transition-all"
                   >
                     <button
-                      onClick={() => removeSubject(p.id, p.subject)}
-                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-muted/60 hover:bg-destructive hover:text-destructive-foreground flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-all"
+                      onClick={(e) => { e.stopPropagation(); removeSubject(p.id, p.subject); }}
+                      className="absolute top-2 right-2 h-8 w-8 rounded-full bg-muted/60 hover:bg-destructive hover:text-destructive-foreground flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-all z-10"
                       aria-label={`${p.subject} entfernen`}
                     >
                       <X className="h-4 w-4" />
@@ -368,7 +377,7 @@ export default function Progress() {
                         <p className="text-[10px] text-muted-foreground mt-1">{pct}% erledigt</p>
                       </div>
 
-                      <div>
+                      <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
                         <div className="flex justify-between text-[11px] text-muted-foreground mb-1 gap-2">
                           <span>Note</span>
                           <span className="truncate text-right">1 = sehr gut · 5 = nicht genügend</span>
@@ -384,6 +393,14 @@ export default function Progress() {
                           </p>
                         )}
                       </div>
+
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setExamSubject(p.subject); }}
+                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 text-xs font-medium py-1.5 transition-colors"
+                      >
+                        <ListChecks className="h-3.5 w-3.5" />
+                        Prüfungsnoten ansehen
+                      </button>
                     </div>
                   </motion.div>
                 );
