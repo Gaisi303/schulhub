@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { AppLayout } from "@/components/AppLayout";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { TaskCard, type Task } from "@/components/TaskCard";
+import { MealCard } from "@/components/MealCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { TIMETABLE_URL } from "@/lib/constants";
@@ -125,6 +126,9 @@ export default function Dashboard() {
             </div>
           </Link>
         </div>
+
+        {/* Meal reminder card */}
+        <MealCard />
 
         {/* Today + Upcoming */}
         <div className="grid lg:grid-cols-2 gap-6">
