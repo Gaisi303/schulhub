@@ -8,6 +8,9 @@ import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import Progress from "./pages/Progress";
 import LernAI from "./pages/LernAI";
+import Notes from "./pages/Notes";
+import Mindmaps from "./pages/Mindmaps";
+import MindmapEditor from "./pages/MindmapEditor";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -27,6 +30,9 @@ const App = () => (
             <Route path="/aufgaben" element={<Tasks />} />
             <Route path="/fortschritt" element={<Progress />} />
             <Route path="/lern-ai" element={<LernAI />} />
+            <Route path="/notizen" element={<Notes />} />
+            <Route path="/mindmaps" element={<Mindmaps />} />
+            <Route path="/mindmaps/:id" element={<MindmapEditor />} />
             <Route path="/einstellungen" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

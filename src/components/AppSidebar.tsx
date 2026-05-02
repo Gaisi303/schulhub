@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, ListChecks, TrendingUp, Settings, GraduationCap, Sparkles } from "lucide-react";
+import { LayoutDashboard, ListChecks, TrendingUp, Settings, GraduationCap, Sparkles, NotebookPen, Network } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +16,8 @@ const items = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Aufgaben", url: "/aufgaben", icon: ListChecks },
   { title: "Lernfortschritt", url: "/fortschritt", icon: TrendingUp },
+  { title: "Notizen", url: "/notizen", icon: NotebookPen },
+  { title: "Mindmaps", url: "/mindmaps", icon: Network },
   { title: "Lern-AI", url: "/lern-ai", icon: Sparkles },
   { title: "Einstellungen", url: "/einstellungen", icon: Settings },
 ];
