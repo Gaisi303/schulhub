@@ -374,18 +374,18 @@ export function LernChatPage() {
                 key={s.id}
                 onClick={() => setActiveId(s.id)}
                 className={cn(
-                  "group w-full flex items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs transition-colors",
+                  "group grid w-full min-w-0 max-w-full grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 overflow-hidden rounded-lg px-2 py-2 text-left text-xs transition-colors",
                   activeId === s.id
                     ? "bg-gradient-primary text-primary-foreground"
                     : "hover:bg-sidebar-accent"
                 )}
               >
-                <MessageSquare className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate flex-1">{s.title}</span>
+                <MessageSquare className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                <span className="min-w-0 max-w-full whitespace-normal break-words leading-snug">{s.title}</span>
                 <span
                   onClick={(e) => deleteSession(s.id, e)}
                   className={cn(
-                    "opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded",
+                    "opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded shrink-0",
                     activeId === s.id ? "hover:bg-white/20" : "hover:bg-destructive/20"
                   )}
                 >
