@@ -409,6 +409,11 @@ export default function Progress() {
           </div>
         )}
       </div>
+      <SubjectExamsDialog
+        subject={examSubject}
+        open={!!examSubject}
+        onOpenChange={(o) => { if (!o) setExamSubject(null); }}
+      />
     </AppLayout>
   );
 }
