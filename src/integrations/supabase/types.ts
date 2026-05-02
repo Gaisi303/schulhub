@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      grade_history: {
+        Row: {
+          grade: number
+          id: string
+          recorded_at: string
+          subject: string
+          user_id: string
+        }
+        Insert: {
+          grade: number
+          id?: string
+          recorded_at?: string
+          subject: string
+          user_id: string
+        }
+        Update: {
+          grade?: number
+          id?: string
+          recorded_at?: string
+          subject?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       meal_dismissals: {
         Row: {
           created_at: string
