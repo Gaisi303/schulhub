@@ -58,6 +58,23 @@ export default function Settings() {
     }
   };
 
+  const saveMealUrl = async () => {
+    if (!user) return;
+    const trimmed = mealUrl.trim();
+    if (trimmed && !/^https?:\/\//i.test(trimmed)) {
+      toast.error("URL muss mit http:// oder https:// beginnen");
+      return;
+    }
+    setSavingMealUrl(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ meal_url: trimmed || null })
+      .eq("user_id", user.id);
+    setSavingMealUrl(false);
+    if (error) toast.error("Konnte nicht gespeichert werden");
+    else toast.success(trimmed ? "URL gespeichert 🔗" : "Standard-URL wiederhergestellt");
+  };
+
   return (
     <AppLayout>
       <div className="max-w-2xl mx-auto space-y-6">
