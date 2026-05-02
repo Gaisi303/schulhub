@@ -82,7 +82,7 @@ export function MealCard() {
             Rückgängig
           </Button>
         ) : (
-          <Button onClick={markDone} size="sm" className="bg-success text-success-foreground hover:bg-success/90">
+          <Button onClick={markDone} size="sm" className="bg-success text-white hover:bg-success/90">
             <Check className="mr-1 h-3 w-3" /> Erledigt
           </Button>
         )}
