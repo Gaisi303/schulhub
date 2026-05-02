@@ -52,37 +52,39 @@ export function MealCard() {
   };
 
   return (
-    <div className="glass rounded-2xl p-5 flex items-center gap-4">
-      <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${
-        done ? "bg-success/20 text-success" : "bg-gradient-to-br from-warning/30 to-destructive/30 text-warning"
-      }`}>
-        {done ? <CheckCircle2 className="h-6 w-6" /> : <UtensilsCrossed className="h-6 w-6" />}
+    <div className="glass rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+        <div className={`h-11 w-11 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center shrink-0 ${
+          done ? "bg-success/20 text-success" : "bg-gradient-to-br from-warning/30 to-destructive/30 text-warning"
+        }`}>
+          {done ? <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" /> : <UtensilsCrossed className="h-5 w-5 sm:h-6 sm:w-6" />}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm sm:text-base">Essensanmeldung</h3>
+          <p className="text-xs text-muted-foreground">
+            Woche ab {format(nextMonday, "dd.MM.yyyy", { locale: de })} ·{" "}
+            {done === null ? "…" : done ? (
+              <span className="text-success font-medium">Erledigt ✓</span>
+            ) : (
+              <span className="text-destructive font-medium">Noch offen</span>
+            )}
+          </p>
+        </div>
       </div>
-      <div className="flex-1 min-w-0">
-        <h3 className="font-semibold">Essensanmeldung</h3>
-        <p className="text-xs text-muted-foreground">
-          Woche ab {format(nextMonday, "dd.MM.yyyy", { locale: de })} ·{" "}
-          {done === null ? "…" : done ? (
-            <span className="text-success font-medium">Erledigt ✓</span>
-          ) : (
-            <span className="text-destructive font-medium">Noch offen</span>
-          )}
-        </p>
-      </div>
-      <div className="flex gap-2 shrink-0">
+      <div className="flex gap-2 shrink-0 w-full sm:w-auto">
         {!done && (
-          <Button asChild size="sm" variant="outline">
+          <Button asChild size="sm" variant="outline" className="flex-1 sm:flex-none">
             <a href={MEAL_URL} target="_blank" rel="noreferrer">
               Bestellen <ExternalLink className="ml-1 h-3 w-3" />
             </a>
           </Button>
         )}
         {done ? (
-          <Button onClick={undo} size="sm" variant="ghost">
+          <Button onClick={undo} size="sm" variant="ghost" className="flex-1 sm:flex-none">
             Rückgängig
           </Button>
         ) : (
-          <Button onClick={markDone} size="sm" className="bg-success text-white hover:bg-success/90">
+          <Button onClick={markDone} size="sm" className="flex-1 sm:flex-none bg-success text-white hover:bg-success/90">
             <Check className="mr-1 h-3 w-3" /> Erledigt
           </Button>
         )}
