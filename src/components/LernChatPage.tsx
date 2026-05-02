@@ -600,7 +600,7 @@ function MessageBubble({ msg }: { msg: Msg }) {
       )}
       <div
         className={cn(
-          "max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm space-y-2",
+          "min-w-0 max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm space-y-2 overflow-hidden break-words",
           msg.role === "user"
             ? "bg-gradient-primary text-primary-foreground rounded-br-sm"
             : "bg-card border border-border/50 rounded-bl-sm"
@@ -614,7 +614,7 @@ function MessageBubble({ msg }: { msg: Msg }) {
           </div>
         )}
         {msg.role === "assistant" ? (
-          <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-pre:my-2 prose-ul:my-1 prose-ol:my-1 prose-headings:my-2 prose-code:text-xs">
+          <div className="prose prose-sm dark:prose-invert max-w-none break-words prose-p:my-1 prose-pre:my-2 prose-pre:whitespace-pre-wrap prose-pre:break-words prose-code:text-xs prose-code:break-words prose-ul:my-1 prose-ol:my-1 prose-headings:my-2 prose-img:max-w-full prose-img:h-auto">
             {text ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
               : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           </div>
