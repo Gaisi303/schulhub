@@ -709,7 +709,7 @@ function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
         <div className={cn("text-[10px] opacity-70")}>{att.kind === "pptx" ? "PowerPoint" : "Word-Dokument"}</div>
       </div>
       <Download className="h-3.5 w-3.5 shrink-0 opacity-70" />
-    </a>
+    </button>
   );
 }
 
