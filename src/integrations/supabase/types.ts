@@ -73,6 +73,45 @@ export type Database = {
         }
         Relationships: []
       }
+      exam_grades: {
+        Row: {
+          created_at: string
+          exam_date: string
+          exam_name: string
+          exam_type: string
+          grade: number
+          id: string
+          notes: string | null
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exam_date?: string
+          exam_name: string
+          exam_type: string
+          grade: number
+          id?: string
+          notes?: string | null
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exam_date?: string
+          exam_name?: string
+          exam_type?: string
+          grade?: number
+          id?: string
+          notes?: string | null
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       grade_history: {
         Row: {
           grade: number
