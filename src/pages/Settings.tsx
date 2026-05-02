@@ -8,25 +8,29 @@ import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Moon, Sun, UtensilsCrossed } from "lucide-react";
+import { Moon, Sun, UtensilsCrossed, ExternalLink } from "lucide-react";
+import { MEAL_URL } from "@/lib/constants";
 
 export default function Settings() {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
   const [name, setName] = useState("");
   const [mealEnabled, setMealEnabled] = useState(false);
+  const [mealUrl, setMealUrl] = useState("");
+  const [savingMealUrl, setSavingMealUrl] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, meal_reminder_enabled")
+      .select("display_name, meal_reminder_enabled, meal_url")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         setName(data?.display_name ?? "");
         setMealEnabled(!!data?.meal_reminder_enabled);
+        setMealUrl(data?.meal_url ?? "");
       });
   }, [user]);
 
@@ -52,6 +56,23 @@ export default function Settings() {
     } else {
       toast.success(val ? "Essensanmeldung aktiviert 🍽️" : "Essensanmeldung deaktiviert");
     }
+  };
+
+  const saveMealUrl = async () => {
+    if (!user) return;
+    const trimmed = mealUrl.trim();
+    if (trimmed && !/^https?:\/\//i.test(trimmed)) {
+      toast.error("URL muss mit http:// oder https:// beginnen");
+      return;
+    }
+    setSavingMealUrl(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ meal_url: trimmed || null })
+      .eq("user_id", user.id);
+    setSavingMealUrl(false);
+    if (error) toast.error("Konnte nicht gespeichert werden");
+    else toast.success(trimmed ? "URL gespeichert 🔗" : "Standard-URL wiederhergestellt");
   };
 
   return (
@@ -93,6 +114,42 @@ export default function Settings() {
             </div>
             <Switch checked={mealEnabled} onCheckedChange={toggleMeal} />
           </div>
+
+          {mealEnabled && (
+            <div className="space-y-2 pt-3 border-t border-border/50">
+              <Label htmlFor="meal-url" className="text-sm">Essensanmeldung-Link</Label>
+              <p className="text-xs text-muted-foreground">
+                Eigene URL für die Bestellseite. Leer = Standard ({new URL(MEAL_URL).hostname}).
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  id="meal-url"
+                  type="url"
+                  placeholder={MEAL_URL}
+                  value={mealUrl}
+                  onChange={(e) => setMealUrl(e.target.value)}
+                />
+                <Button
+                  onClick={saveMealUrl}
+                  disabled={savingMealUrl}
+                  variant="outline"
+                  className="shrink-0"
+                >
+                  {savingMealUrl ? "…" : "Speichern"}
+                </Button>
+              </div>
+              {mealUrl.trim() && (
+                <a
+                  href={mealUrl.trim()}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                >
+                  Link testen <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="glass rounded-2xl p-6 space-y-4">

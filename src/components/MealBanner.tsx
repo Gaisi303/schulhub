@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useMealReminder } from "@/hooks/useMealReminder";
-import { MEAL_URL } from "@/lib/constants";
+
 import { startOfWeek, addWeeks, format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ import { toast } from "sonner";
  */
 export function MealBanner() {
   const { user } = useAuth();
-  const enabled = useMealReminder();
+  const { enabled, url } = useMealReminder();
   const [show, setShow] = useState(false);
   const nextWeekStart = format(
     addWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), 1),
@@ -67,7 +67,7 @@ export function MealBanner() {
               </div>
               <div className="flex gap-2 shrink-0">
                 <Button asChild variant="destructive" size="sm">
-                  <a href={MEAL_URL} target="_blank" rel="noreferrer">
+                  <a href={url} target="_blank" rel="noreferrer">
                     Jetzt bestellen <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
                 </Button>

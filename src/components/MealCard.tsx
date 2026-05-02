@@ -3,13 +3,14 @@ import { UtensilsCrossed, ExternalLink, Check, CheckCircle2 } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { MEAL_URL } from "@/lib/constants";
+import { useMealReminder } from "@/hooks/useMealReminder";
 import { startOfWeek, addWeeks, format } from "date-fns";
 import { de } from "date-fns/locale";
 import { toast } from "sonner";
 
 export function MealCard() {
   const { user } = useAuth();
+  const { url } = useMealReminder();
   const [done, setDone] = useState<boolean | null>(null);
   const nextMonday = addWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), 1);
   const nextWeekStart = format(nextMonday, "yyyy-MM-dd");
@@ -74,7 +75,7 @@ export function MealCard() {
       <div className="flex gap-2 shrink-0 w-full sm:w-auto">
         {!done && (
           <Button asChild size="sm" variant="outline" className="flex-1 sm:flex-none">
-            <a href={MEAL_URL} target="_blank" rel="noreferrer">
+            <a href={url} target="_blank" rel="noreferrer">
               Bestellen <ExternalLink className="ml-1 h-3 w-3" />
             </a>
           </Button>
