@@ -418,7 +418,7 @@ export function LernChatPage() {
                   <History className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[85vw] max-w-sm p-0 flex flex-col">
+              <SheetContent side="left" className="w-[92vw] max-w-sm p-0 flex flex-col overflow-hidden">
                 <SheetHeader className="p-3 border-b border-border/50">
                   <SheetTitle className="text-sm">Unterhaltungen</SheetTitle>
                 </SheetHeader>
@@ -432,18 +432,18 @@ export function LernChatPage() {
                         key={s.id}
                         onClick={() => { setActiveId(s.id); setHistoryOpen(false); }}
                         className={cn(
-                          "group w-full flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm transition-colors",
+                          "group grid w-full min-w-0 max-w-full grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 overflow-hidden rounded-lg px-2.5 py-2.5 text-left text-sm transition-colors",
                           activeId === s.id
                             ? "bg-gradient-primary text-primary-foreground"
                             : "hover:bg-sidebar-accent"
                         )}
                       >
-                        <MessageSquare className="h-4 w-4 shrink-0" />
-                        <span className="truncate flex-1">{s.title}</span>
+                        <MessageSquare className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span className="min-w-0 max-w-full whitespace-normal break-words leading-snug">{s.title}</span>
                         <span
                           onClick={(e) => deleteSession(s.id, e)}
                           className={cn(
-                            "p-1 rounded",
+                            "shrink-0 rounded p-1",
                             activeId === s.id ? "hover:bg-white/20" : "hover:bg-destructive/20"
                           )}
                         >
