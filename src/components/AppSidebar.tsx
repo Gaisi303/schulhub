@@ -57,7 +57,7 @@ export function AppSidebar() {
                           `flex items-center gap-3 rounded-lg transition-all ${
                             a
                               ? "bg-gradient-primary text-primary-foreground shadow-glow font-medium"
-                              : "hover:bg-sidebar-accent"
+                              : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                           }`
                         }
                       >
