@@ -49,6 +49,7 @@ export function LernChatPage() {
   const [genBusy, setGenBusy] = useState<null | "image" | "docx" | "pptx">(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const loadSessions = async () => {
     if (!user) return;
