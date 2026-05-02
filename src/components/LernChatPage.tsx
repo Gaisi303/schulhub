@@ -688,10 +688,11 @@ function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
   }
 
   return (
-    <a
-      href={att.downloadUrl} download={att.name}
+    <button
+      type="button"
+      onClick={() => downloadAttachment(att.downloadUrl, att.name)}
       className={cn(
-        "flex items-center gap-2 text-xs px-3 py-2 rounded-lg border transition-colors",
+        "flex items-center gap-2 text-xs px-3 py-2 rounded-lg border transition-colors text-left w-full",
         dark
           ? "border-white/30 bg-white/10 hover:bg-white/20"
           : "border-border/50 bg-background hover:bg-muted"
