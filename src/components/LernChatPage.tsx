@@ -400,21 +400,22 @@ export function LernChatPage() {
       {/* Main chat */}
       <div className="flex-1 flex flex-col glass rounded-2xl overflow-hidden min-w-0">
         {/* Header */}
-        <div className="flex items-center justify-between gap-2 p-3 border-b border-border/50">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center justify-between gap-2 p-2.5 sm:p-3 border-b border-border/50">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <div className="h-9 w-9 shrink-0 rounded-xl bg-gradient-primary shadow-glow flex items-center justify-center">
               <Sparkles className="h-4 w-4 text-primary-foreground" />
             </div>
             <div className="min-w-0">
-              <div className="text-base font-bold gradient-text truncate">Lern-AI</div>
-              <div className="text-[10px] text-muted-foreground">Gemini · Chat, Bilder, Word, PowerPoint</div>
+              <div className="text-base font-bold gradient-text truncate leading-tight">Lern-AI</div>
+              <div className="hidden sm:block text-[10px] text-muted-foreground truncate">Gemini · Chat, Bilder, Word, PowerPoint</div>
+              <div className="sm:hidden text-[10px] text-muted-foreground truncate">Gemini Tutor</div>
             </div>
           </div>
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-1 md:hidden shrink-0">
             <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
               <SheetTrigger asChild>
-                <Button size="sm" variant="outline" aria-label="Verlauf">
-                  <History className="h-3.5 w-3.5 mr-1" /> Verlauf
+                <Button size="icon" variant="outline" aria-label="Verlauf" className="h-9 w-9">
+                  <History className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[85vw] max-w-sm p-0 flex flex-col">
@@ -454,8 +455,8 @@ export function LernChatPage() {
                 </ScrollArea>
               </SheetContent>
             </Sheet>
-            <Button size="sm" variant="outline" onClick={() => { newChat(); setHistoryOpen(false); }}>
-              <Plus className="h-3.5 w-3.5 mr-1" /> Neu
+            <Button size="icon" variant="outline" aria-label="Neue Unterhaltung" className="h-9 w-9" onClick={() => { newChat(); setHistoryOpen(false); }}>
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
         </div>
