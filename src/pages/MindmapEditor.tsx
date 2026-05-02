@@ -163,8 +163,9 @@ function Editor() {
     });
     if (selectedNode) {
       setEdges((eds) => {
+        const conn: Connection = { source: selectedNode.id, target: newId, sourceHandle: null, targetHandle: null };
         const next = addEdge(
-          { source: selectedNode.id, target: newId, markerEnd: { type: MarkerType.ArrowClosed }, style: { strokeWidth: 2 } },
+          { ...conn, markerEnd: { type: MarkerType.ArrowClosed }, style: { strokeWidth: 2 } },
           eds
         );
         scheduleSave({ edges: next });
