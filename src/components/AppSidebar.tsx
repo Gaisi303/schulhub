@@ -49,17 +49,20 @@ export function AppSidebar() {
                 const active = isActive(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={item.title}
+                      className={
+                        active
+                          ? "bg-gradient-primary !text-primary-foreground shadow-glow font-medium hover:!text-primary-foreground data-[active=true]:!text-primary-foreground [&>span]:!text-current [&>svg]:!text-current"
+                          : "!text-[hsl(var(--sidebar-foreground))] hover:bg-sidebar-accent hover:!text-[hsl(var(--sidebar-accent-foreground))] [&>span]:!text-current [&>svg]:!text-current"
+                      }
+                    >
                       <NavLink
                         to={item.url}
                         end={item.url === "/"}
-                        className={({ isActive: a }) =>
-                          `flex items-center gap-3 rounded-lg transition-all ${
-                            a
-                              ? "bg-gradient-primary text-primary-foreground shadow-glow font-medium"
-                              : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                          }`
-                        }
+                        className="flex items-center gap-3 rounded-lg transition-all"
                       >
                         <item.icon className="h-4 w-4 shrink-0" />
                         {!collapsed && <span>{item.title}</span>}
