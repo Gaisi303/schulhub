@@ -67,7 +67,7 @@ export function MealBanner() {
               </div>
               <div className="flex gap-2 shrink-0">
                 <Button asChild variant="destructive" size="sm">
-                  <a href={MEAL_URL} target="_blank" rel="noreferrer">
+                  <a href={url} target="_blank" rel="noreferrer">
                     Jetzt bestellen <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
                 </Button>
