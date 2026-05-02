@@ -49,6 +49,7 @@ export function LernChatPage() {
   const [genBusy, setGenBusy] = useState<null | "image" | "docx" | "pptx">(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const loadSessions = async () => {
     if (!user) return;
@@ -410,7 +411,7 @@ export function LernChatPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 md:hidden">
-            <Sheet>
+            <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
               <SheetTrigger asChild>
                 <Button size="sm" variant="outline" aria-label="Verlauf">
                   <History className="h-3.5 w-3.5 mr-1" /> Verlauf
@@ -428,7 +429,7 @@ export function LernChatPage() {
                     {sessions.map((s) => (
                       <button
                         key={s.id}
-                        onClick={() => setActiveId(s.id)}
+                        onClick={() => { setActiveId(s.id); setHistoryOpen(false); }}
                         className={cn(
                           "group w-full flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm transition-colors",
                           activeId === s.id
@@ -453,7 +454,7 @@ export function LernChatPage() {
                 </ScrollArea>
               </SheetContent>
             </Sheet>
-            <Button size="sm" variant="outline" onClick={newChat}>
+            <Button size="sm" variant="outline" onClick={() => { newChat(); setHistoryOpen(false); }}>
               <Plus className="h-3.5 w-3.5 mr-1" /> Neu
             </Button>
           </div>
