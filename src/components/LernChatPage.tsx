@@ -433,7 +433,7 @@ export function LernChatPage() {
               ))}
             </div>
           )}
-          <div className="relative">
+          <div className="rounded-xl border border-border/50 bg-background focus-within:ring-2 focus-within:ring-primary/40 transition-shadow">
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -441,57 +441,56 @@ export function LernChatPage() {
               placeholder="Frage stellen, Datei anhängen oder Bild/Word/Slides erstellen..."
               rows={2}
               disabled={isBusy}
-              className="resize-none pl-24 pr-12 text-sm rounded-xl border-border/50 focus-visible:ring-primary/50"
+              className="resize-none border-0 bg-transparent text-sm focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none min-h-[56px]"
             />
             <input
               ref={fileRef} type="file" multiple className="hidden"
               accept="image/*,.pdf,.docx,.txt,.md,.csv"
               onChange={(e) => { onPickFiles(e.target.files); e.target.value = ""; }}
             />
-
-            {/* Left controls: attach + generate */}
-            <div className="absolute left-1.5 bottom-1.5 flex items-center gap-0.5">
+            <div className="flex items-center justify-between px-2 pb-2">
+              <div className="flex items-center gap-0.5">
+                <Button
+                  size="icon" variant="ghost" type="button" className="h-8 w-8"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={isBusy || files.length >= MAX_FILES}
+                  aria-label="Datei anhängen"
+                  title="Bild, PDF oder Word anhängen"
+                >
+                  <Paperclip className="h-4 w-4" />
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="icon" variant="ghost" type="button" className="h-8 w-8"
+                      disabled={isBusy || !input.trim()}
+                      aria-label="Erstellen"
+                      title="Bild / Word / PowerPoint erstellen"
+                    >
+                      <Wand2 className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuItem onClick={generateImage}>
+                      <ImageIcon className="h-4 w-4 mr-2" /> Bild erstellen
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => generateDoc("docx")}>
+                      <FileText className="h-4 w-4 mr-2" /> Word-Dokument erstellen
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => generateDoc("pptx")}>
+                      <Presentation className="h-4 w-4 mr-2" /> PowerPoint erstellen
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
               <Button
-                size="icon" variant="ghost" type="button" className="h-8 w-8"
-                onClick={() => fileRef.current?.click()}
-                disabled={isBusy || files.length >= MAX_FILES}
-                aria-label="Datei anhängen"
-                title="Bild, PDF oder Word anhängen"
+                size="icon" onClick={send}
+                disabled={(!input.trim() && files.length === 0) || isBusy}
+                className="h-8 w-8 bg-gradient-primary hover:opacity-90"
               >
-                <Paperclip className="h-4 w-4" />
+                {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    size="icon" variant="ghost" type="button" className="h-8 w-8"
-                    disabled={isBusy || !input.trim()}
-                    aria-label="Erstellen"
-                    title="Bild / Word / PowerPoint erstellen"
-                  >
-                    <Wand2 className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuItem onClick={generateImage}>
-                    <ImageIcon className="h-4 w-4 mr-2" /> Bild erstellen
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => generateDoc("docx")}>
-                    <FileText className="h-4 w-4 mr-2" /> Word-Dokument erstellen
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => generateDoc("pptx")}>
-                    <Presentation className="h-4 w-4 mr-2" /> PowerPoint erstellen
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
-
-            <Button
-              size="icon" onClick={send}
-              disabled={(!input.trim() && files.length === 0) || isBusy}
-              className="absolute right-2 bottom-2 h-8 w-8 bg-gradient-primary hover:opacity-90"
-            >
-              {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-            </Button>
           </div>
           <p className="text-[10px] text-muted-foreground text-center">
             📎 Anhängen · 🪄 Tippe etwas und wähle "erstellen" für Bild/Word/PPT · Enter = senden
