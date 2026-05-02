@@ -409,9 +409,54 @@ export function LernChatPage() {
               <div className="text-[10px] text-muted-foreground">Gemini · Chat, Bilder, Word, PowerPoint</div>
             </div>
           </div>
-          <Button size="sm" variant="outline" onClick={newChat} className="md:hidden">
-            <Plus className="h-3.5 w-3.5 mr-1" /> Neu
-          </Button>
+          <div className="flex items-center gap-2 md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button size="sm" variant="outline" aria-label="Verlauf">
+                  <History className="h-3.5 w-3.5 mr-1" /> Verlauf
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[85vw] max-w-sm p-0 flex flex-col">
+                <SheetHeader className="p-3 border-b border-border/50">
+                  <SheetTitle className="text-sm">Unterhaltungen</SheetTitle>
+                </SheetHeader>
+                <ScrollArea className="flex-1">
+                  <div className="p-2 space-y-1">
+                    {sessions.length === 0 && (
+                      <p className="text-xs text-muted-foreground text-center py-8 px-3">Noch keine Unterhaltungen.</p>
+                    )}
+                    {sessions.map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => setActiveId(s.id)}
+                        className={cn(
+                          "group w-full flex items-center gap-2 rounded-lg px-2 py-2 text-left text-sm transition-colors",
+                          activeId === s.id
+                            ? "bg-gradient-primary text-primary-foreground"
+                            : "hover:bg-sidebar-accent"
+                        )}
+                      >
+                        <MessageSquare className="h-4 w-4 shrink-0" />
+                        <span className="truncate flex-1">{s.title}</span>
+                        <span
+                          onClick={(e) => deleteSession(s.id, e)}
+                          className={cn(
+                            "p-1 rounded",
+                            activeId === s.id ? "hover:bg-white/20" : "hover:bg-destructive/20"
+                          )}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </SheetContent>
+            </Sheet>
+            <Button size="sm" variant="outline" onClick={newChat}>
+              <Plus className="h-3.5 w-3.5 mr-1" /> Neu
+            </Button>
+          </div>
         </div>
 
         {/* Messages */}
