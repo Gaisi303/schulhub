@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 import {
   Plus, MessageSquare, Trash2, Send, Sparkles, Loader2,
   GraduationCap, Paperclip, X, Image as ImageIcon, FileText,
-  FileImage, Presentation, Download, Wand2,
+  FileImage, Presentation, Download, Wand2, History,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger,
+} from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
