@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS meal_reminder_enabled boolean NOT NULL DEFAULT false;

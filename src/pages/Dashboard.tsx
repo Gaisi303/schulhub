@@ -7,6 +7,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { TaskCard, type Task } from "@/components/TaskCard";
 import { MealCard } from "@/components/MealCard";
+import { useMealReminder } from "@/hooks/useMealReminder";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { TIMETABLE_URL } from "@/lib/constants";
@@ -16,6 +17,7 @@ import { toast } from "sonner";
 export default function Dashboard() {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const mealEnabled = useMealReminder();
   const [profile, setProfile] = useState<{ display_name: string | null } | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -128,7 +130,7 @@ export default function Dashboard() {
         </div>
 
         {/* Meal reminder card */}
-        <MealCard />
+        {mealEnabled && <MealCard />}
 
         {/* Today + Upcoming */}
         <div className="grid lg:grid-cols-2 gap-6">

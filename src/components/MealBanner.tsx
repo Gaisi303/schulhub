@@ -3,6 +3,7 @@ import { AlertTriangle, ExternalLink, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useMealReminder } from "@/hooks/useMealReminder";
 import { MEAL_URL } from "@/lib/constants";
 import { startOfWeek, addWeeks, format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,11 +11,11 @@ import { toast } from "sonner";
 
 /**
  * Reminder for the meal order for NEXT week.
- * Shows every day until the user marks it as done.
- * Resets automatically each week (new week_start = new row).
+ * Only shown when the user enabled the feature in settings.
  */
 export function MealBanner() {
   const { user } = useAuth();
+  const enabled = useMealReminder();
   const [show, setShow] = useState(false);
   const nextWeekStart = format(
     addWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), 1),
@@ -22,7 +23,7 @@ export function MealBanner() {
   );
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !enabled) { setShow(false); return; }
     supabase
       .from("meal_dismissals")
       .select("id")
@@ -30,7 +31,7 @@ export function MealBanner() {
       .eq("week_start", nextWeekStart)
       .maybeSingle()
       .then(({ data }) => setShow(!data));
-  }, [user, nextWeekStart]);
+  }, [user, enabled, nextWeekStart]);
 
   const dismiss = async () => {
     if (!user) return;
