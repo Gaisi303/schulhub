@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import Progress from "./pages/Progress";
+import LernAI from "./pages/LernAI";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/aufgaben" element={<Tasks />} />
             <Route path="/fortschritt" element={<Progress />} />
+            <Route path="/lern-ai" element={<LernAI />} />
             <Route path="/einstellungen" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
