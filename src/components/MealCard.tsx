@@ -3,7 +3,7 @@ import { UtensilsCrossed, ExternalLink, Check, CheckCircle2 } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { MEAL_URL } from "@/lib/constants";
+import { useMealReminder } from "@/hooks/useMealReminder";
 import { startOfWeek, addWeeks, format } from "date-fns";
 import { de } from "date-fns/locale";
 import { toast } from "sonner";
