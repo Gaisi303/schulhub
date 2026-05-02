@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import {
   Popover, PopoverContent, PopoverTrigger,
 } from "@/components/ui/popover";
-import { Plus, X, Search, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Plus, X, Search, TrendingUp, TrendingDown, Minus, ListChecks } from "lucide-react";
+import { SubjectExamsDialog } from "@/components/SubjectExamsDialog";
 import { format, parseISO, startOfWeek, addWeeks, isWithinInterval } from "date-fns";
 import { de } from "date-fns/locale";
 import { toast } from "sonner";
