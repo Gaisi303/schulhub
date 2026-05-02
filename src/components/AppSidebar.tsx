@@ -18,8 +18,9 @@ const items = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Aufgaben", url: "/aufgaben", icon: ListChecks },
   { title: "Lernfortschritt", url: "/fortschritt", icon: TrendingUp },
-  { title: "Einstellungen", url: "/einstellungen", icon: Settings },
 ];
+
+const settingsItem = { title: "Einstellungen", url: "/einstellungen", icon: Settings };
 
 export function AppSidebar() {
   const { state } = useSidebar();
@@ -76,7 +77,7 @@ export function AppSidebar() {
                   );
                 })}
 
-                {/* Lern-AI entry */}
+                {/* Lern-AI entry (between Lernfortschritt and Einstellungen) */}
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     onClick={() => setChatOpen(true)}
@@ -85,6 +86,25 @@ export function AppSidebar() {
                   >
                     <Sparkles className="h-4 w-4 shrink-0" />
                     {!collapsed && <span>Lern-AI</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+
+                {/* Einstellungen */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(settingsItem.url)}
+                    tooltip={settingsItem.title}
+                    className={
+                      isActive(settingsItem.url)
+                        ? "bg-gradient-primary !text-primary-foreground shadow-glow font-medium hover:!text-primary-foreground data-[active=true]:!text-primary-foreground [&>span]:!text-current [&>svg]:!text-current"
+                        : "!text-sidebar-foreground hover:bg-sidebar-accent hover:!text-sidebar-accent-foreground [&>span]:!text-current [&>svg]:!text-current"
+                    }
+                  >
+                    <NavLink to={settingsItem.url} className="flex items-center gap-3 rounded-lg transition-all">
+                      <settingsItem.icon className="h-4 w-4 shrink-0" />
+                      {!collapsed && <span>{settingsItem.title}</span>}
+                    </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
