@@ -16,18 +16,21 @@ export default function Settings() {
   const { theme, toggle } = useTheme();
   const [name, setName] = useState("");
   const [mealEnabled, setMealEnabled] = useState(false);
+  const [mealUrl, setMealUrl] = useState("");
+  const [savingMealUrl, setSavingMealUrl] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, meal_reminder_enabled")
+      .select("display_name, meal_reminder_enabled, meal_url")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         setName(data?.display_name ?? "");
         setMealEnabled(!!data?.meal_reminder_enabled);
+        setMealUrl(data?.meal_url ?? "");
       });
   }, [user]);
 
