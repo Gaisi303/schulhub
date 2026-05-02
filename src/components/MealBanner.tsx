@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useMealReminder } from "@/hooks/useMealReminder";
-import { MEAL_URL } from "@/lib/constants";
+
 import { startOfWeek, addWeeks, format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
