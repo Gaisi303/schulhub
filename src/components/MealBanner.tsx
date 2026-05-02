@@ -15,7 +15,7 @@ import { toast } from "sonner";
  */
 export function MealBanner() {
   const { user } = useAuth();
-  const enabled = useMealReminder();
+  const { enabled, url } = useMealReminder();
   const [show, setShow] = useState(false);
   const nextWeekStart = format(
     addWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), 1),
