@@ -4,43 +4,45 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { MEAL_URL } from "@/lib/constants";
-import { startOfWeek, format } from "date-fns";
+import { startOfWeek, addWeeks, format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
+/**
+ * Reminder for the meal order for NEXT week.
+ * Shows every day until the user marks it as done.
+ * Resets automatically each week (new week_start = new row).
+ */
 export function MealBanner() {
   const { user } = useAuth();
   const [show, setShow] = useState(false);
-  const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), "yyyy-MM-dd");
+  const nextWeekStart = format(
+    addWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), 1),
+    "yyyy-MM-dd"
+  );
 
   useEffect(() => {
     if (!user) return;
-    // Show only on Wednesdays (day 3)
-    const isWednesday = new Date().getDay() === 3;
-    if (!isWednesday) {
-      setShow(false);
-      return;
-    }
     supabase
       .from("meal_dismissals")
       .select("id")
       .eq("user_id", user.id)
-      .eq("week_start", weekStart)
+      .eq("week_start", nextWeekStart)
       .maybeSingle()
       .then(({ data }) => setShow(!data));
-  }, [user, weekStart]);
+  }, [user, nextWeekStart]);
 
   const dismiss = async () => {
     if (!user) return;
     const { error } = await supabase
       .from("meal_dismissals")
-      .insert({ user_id: user.id, week_start: weekStart });
+      .insert({ user_id: user.id, week_start: nextWeekStart });
     if (error && error.code !== "23505") {
       toast.error("Konnte nicht gespeichert werden");
       return;
     }
     setShow(false);
-    toast.success("Essensanmeldung erledigt – bis nächsten Mittwoch! 🍽️");
+    toast.success("Essensanmeldung erledigt – bis nächste Woche! 🍽️");
   };
 
   return (
@@ -59,13 +61,13 @@ export function MealBanner() {
                   <AlertTriangle className="h-4 w-4 text-destructive-foreground" />
                 </div>
                 <p className="text-sm font-semibold text-destructive-foreground/90 dark:text-destructive">
-                  ⚠️ ACHTUNG: Du hast die Essensanmeldung für nächste Woche noch nicht erledigt!
+                  ⚠️ Essensanmeldung für nächste Woche noch nicht erledigt!
                 </p>
               </div>
               <div className="flex gap-2 shrink-0">
                 <Button asChild variant="destructive" size="sm">
                   <a href={MEAL_URL} target="_blank" rel="noreferrer">
-                    Jetzt anmelden <ExternalLink className="ml-1 h-3 w-3" />
+                    Jetzt bestellen <ExternalLink className="ml-1 h-3 w-3" />
                   </a>
                 </Button>
                 <Button onClick={dismiss} variant="outline" size="sm" className="border-destructive/40">
