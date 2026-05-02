@@ -17,6 +17,7 @@ import { toast } from "sonner";
 export default function Dashboard() {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const mealEnabled = useMealReminder();
   const [profile, setProfile] = useState<{ display_name: string | null } | null>(null);
   const [open, setOpen] = useState(false);
 
