@@ -112,6 +112,42 @@ export type Database = {
         }
         Relationships: []
       }
+      grade_calculations: {
+        Row: {
+          components: Json
+          country: string
+          created_at: string
+          id: string
+          result_grade: number
+          result_label: string | null
+          subject: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          components?: Json
+          country: string
+          created_at?: string
+          id?: string
+          result_grade: number
+          result_label?: string | null
+          subject?: string | null
+          title?: string
+          user_id: string
+        }
+        Update: {
+          components?: Json
+          country?: string
+          created_at?: string
+          id?: string
+          result_grade?: number
+          result_label?: string | null
+          subject?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       grade_history: {
         Row: {
           grade: number
@@ -282,6 +318,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      task_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number
+          id: string
+          local_data_url: string | null
+          mime_type: string | null
+          storage_path: string | null
+          storage_type: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: number
+          id?: string
+          local_data_url?: string | null
+          mime_type?: string | null
+          storage_path?: string | null
+          storage_type?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number
+          id?: string
+          local_data_url?: string | null
+          mime_type?: string | null
+          storage_path?: string | null
+          storage_type?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_attachments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
