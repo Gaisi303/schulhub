@@ -11,6 +11,7 @@ import LernAI from "./pages/LernAI";
 import Notes from "./pages/Notes";
 import Mindmaps from "./pages/Mindmaps";
 import MindmapEditor from "./pages/MindmapEditor";
+import GradeCalculator from "./pages/GradeCalculator";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/aufgaben" element={<Tasks />} />
             <Route path="/fortschritt" element={<Progress />} />
+            <Route path="/notenberechnung" element={<GradeCalculator />} />
             <Route path="/lern-ai" element={<LernAI />} />
             <Route path="/notizen" element={<Notes />} />
             <Route path="/mindmaps" element={<Mindmaps />} />
