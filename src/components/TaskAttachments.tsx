@@ -132,19 +132,19 @@ export function TaskAttachments({ taskId }: { taskId: string }) {
   };
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <Label className="flex items-center gap-1.5"><Paperclip className="h-4 w-4" /> Anhänge</Label>
-        <div className="flex items-center gap-2 flex-wrap">
+    <div className="w-full max-w-full min-w-0 space-y-2 overflow-hidden">
+      <div className="grid w-full max-w-full min-w-0 gap-2">
+        <Label className="flex min-w-0 items-center gap-1.5"><Paperclip className="h-4 w-4 shrink-0" /> Anhänge</Label>
+        <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <Select value={target} onValueChange={(v) => setTarget(v as any)}>
-            <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-8 w-full min-w-0 text-xs"><SelectValue /></SelectTrigger>
             <SelectContent className="bg-popover">
               <SelectItem value="cloud"><span className="flex items-center gap-1.5"><Cloud className="h-3 w-3" /> Cloud</span></SelectItem>
               <SelectItem value="local"><span className="flex items-center gap-1.5"><HardDrive className="h-3 w-3" /> Lokal</span></SelectItem>
             </SelectContent>
           </Select>
-          <Button type="button" size="sm" variant="outline" onClick={onPick} disabled={busy}>
-            <Upload className="h-3.5 w-3.5 mr-1" /> Datei
+          <Button type="button" size="icon" variant="outline" className="h-8 w-8 shrink-0" onClick={onPick} disabled={busy} aria-label="Datei hochladen">
+            <Upload className="h-3.5 w-3.5" />
           </Button>
           <input ref={inputRef} type="file" multiple accept={ACCEPT} className="hidden" onChange={(e) => onFiles(e.target.files)} />
         </div>
@@ -153,9 +153,9 @@ export function TaskAttachments({ taskId }: { taskId: string }) {
       {items.length === 0 ? (
         <p className="text-xs text-muted-foreground italic">Keine Anhänge. PDF, Word, Excel, PowerPoint, ODT u.a.</p>
       ) : (
-        <ul className="space-y-1.5">
+        <ul className="w-full max-w-full min-w-0 space-y-1.5 overflow-hidden">
           {items.map((a) => (
-            <li key={a.id} className="flex items-center gap-2 rounded-lg border border-border/50 bg-background/40 px-2 py-1.5 w-full">
+            <li key={a.id} className="grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2 rounded-lg border border-border/50 bg-background/40 px-2 py-1.5">
               <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm truncate">{a.file_name}</div>
