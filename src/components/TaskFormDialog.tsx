@@ -17,6 +17,7 @@ import { SUBJECTS } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { TaskAttachments } from "./TaskAttachments";
 
 const schema = z.object({
   title: z.string().trim().min(1, "Titel erforderlich").max(120),
@@ -104,7 +105,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md glass-strong">
+      <DialogContent className="sm:max-w-md glass-strong max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{task ? "Aufgabe bearbeiten" : "Neue Aufgabe"}</DialogTitle>
         </DialogHeader>
@@ -182,6 +183,12 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
             <Label htmlFor="desc">Notizen (optional)</Label>
             <Textarea id="desc" {...form.register("description")} rows={3} placeholder="Zusätzliche Details..." />
           </div>
+
+          {task?.id ? (
+            <TaskAttachments taskId={task.id} />
+          ) : (
+            <p className="text-xs text-muted-foreground italic">💡 Anhänge können nach dem Erstellen hinzugefügt werden.</p>
+          )}
 
           <Button type="submit" disabled={submitting} className="w-full bg-gradient-primary hover:opacity-90 shadow-glow">
             {submitting ? "Speichern..." : task ? "Aktualisieren" : "Erstellen"}
