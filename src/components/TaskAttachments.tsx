@@ -155,7 +155,7 @@ export function TaskAttachments({ taskId }: { taskId: string }) {
       ) : (
         <ul className="space-y-1.5">
           {items.map((a) => (
-            <li key={a.id} className="flex items-center gap-2 rounded-lg border border-border/50 bg-background/40 px-2 py-1.5">
+            <li key={a.id} className="flex items-center gap-2 rounded-lg border border-border/50 bg-background/40 px-2 py-1.5 w-full">
               <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm truncate">{a.file_name}</div>
@@ -166,10 +166,10 @@ export function TaskAttachments({ taskId }: { taskId: string }) {
                   {fmtSize(a.file_size)}
                 </div>
               </div>
-              <Button type="button" size="icon" variant="ghost" className="h-7 w-7" onClick={() => onDownload(a)}>
+              <Button type="button" size="icon" variant="ghost" className="h-7 w-7 shrink-0" onClick={() => onDownload(a)}>
                 <Download className="h-3.5 w-3.5" />
               </Button>
-              <Button type="button" size="icon" variant="ghost" className="h-7 w-7 hover:text-destructive" onClick={() => onDelete(a)}>
+              <Button type="button" size="icon" variant="ghost" className="h-7 w-7 shrink-0 hover:text-destructive" onClick={() => onDelete(a)}>
                 <X className="h-3.5 w-3.5" />
               </Button>
             </li>
