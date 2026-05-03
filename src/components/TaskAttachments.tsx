@@ -133,11 +133,11 @@ export function TaskAttachments({ taskId }: { taskId: string }) {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <Label className="flex items-center gap-1.5"><Paperclip className="h-4 w-4" /> Anhänge</Label>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Select value={target} onValueChange={(v) => setTarget(v as any)}>
-            <SelectTrigger className="h-8 w-[140px] text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-8 w-[120px] text-xs"><SelectValue /></SelectTrigger>
             <SelectContent className="bg-popover">
               <SelectItem value="cloud"><span className="flex items-center gap-1.5"><Cloud className="h-3 w-3" /> Cloud</span></SelectItem>
               <SelectItem value="local"><span className="flex items-center gap-1.5"><HardDrive className="h-3 w-3" /> Lokal</span></SelectItem>
