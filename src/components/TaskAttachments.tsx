@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { FileViewerDialog, type ViewableFile } from "@/components/FileViewerDialog";
 import { saveFile } from "@/lib/fileActions";
+import { ensureCanUpload, formatBytes } from "@/lib/storageQuota";
 import { toast } from "sonner";
 
 interface Attachment {
