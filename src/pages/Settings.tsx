@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Moon, Sun, UtensilsCrossed, ExternalLink } from "lucide-react";
+import { Moon, Sun, UtensilsCrossed, ExternalLink, HardDrive } from "lucide-react";
 import { MEAL_URL } from "@/lib/constants";
+import { getUsedBytes, formatBytes, STORAGE_QUOTA_BYTES } from "@/lib/storageQuota";
 
 export default function Settings() {
   const { user } = useAuth();
