@@ -21,6 +21,9 @@ export default function Settings() {
   const [mealUrl, setMealUrl] = useState("");
   const [savingMealUrl, setSavingMealUrl] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [usedBytes, setUsedBytes] = useState<number | null>(null);
+
+  const refreshUsage = () => getUsedBytes().then(setUsedBytes);
 
   useEffect(() => {
     if (!user) return;
