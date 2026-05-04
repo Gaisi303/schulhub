@@ -37,6 +37,7 @@ export default function Settings() {
         setMealEnabled(!!data?.meal_reminder_enabled);
         setMealUrl(data?.meal_url ?? "");
       });
+    refreshUsage();
   }, [user]);
 
   const save = async () => {
