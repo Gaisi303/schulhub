@@ -89,7 +89,7 @@ export function TaskAttachments({ taskId }: { taskId: string }) {
         if (target === "cloud") {
           if (file.size > MAX_CLOUD_BYTES) { toast.error(`${file.name}: max 25 MB`); continue; }
           const check = await ensureCanUpload(file.size);
-          if (check.ok === false) {
+          if (!check.ok) {
             toast.error(`Speicher voll: ${formatBytes(check.used)} / ${formatBytes(check.limit)} verbraucht`);
             continue;
           }
