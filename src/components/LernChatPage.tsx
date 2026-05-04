@@ -590,6 +590,7 @@ function EmptyState({ onPick }: { onPick: (s: string) => void }) {
 }
 
 function MessageBubble({ msg }: { msg: Msg }) {
+  const [viewer, setViewer] = useState<ViewableFile | null>(null);
   const text = typeof msg.content === "string"
     ? msg.content
     : msg.content.filter((p): p is Extract<ContentPart, { type: "text" }> => p.type === "text").map((p) => p.text).join("\n");
@@ -615,7 +616,9 @@ function MessageBubble({ msg }: { msg: Msg }) {
         {imgs.length > 0 && (
           <div className={cn("grid gap-1.5", imgs.length > 1 ? "grid-cols-2" : "grid-cols-1")}>
             {imgs.map((src, i) => (
-              <img key={i} src={src} alt="" className="rounded-lg max-h-64 w-full object-cover" />
+              <button key={i} type="button" onClick={() => setViewer({ name: `Bild-${i + 1}.png`, url: src, mimeType: "image/png", source: src })} className="min-w-0 overflow-hidden rounded-lg">
+                <img src={src} alt="" className="max-h-64 w-full object-cover transition-transform hover:scale-[1.01]" />
+              </button>
             ))}
           </div>
         )}
@@ -630,34 +633,25 @@ function MessageBubble({ msg }: { msg: Msg }) {
         {msg.attachments && msg.attachments.length > 0 && (
           <div className="space-y-1.5 pt-1">
             {msg.attachments.map((a, i) => (
-              <AttachmentChip key={i} att={a} dark={msg.role === "user"} />
+              <AttachmentChip key={i} att={a} dark={msg.role === "user"} onOpen={setViewer} />
             ))}
           </div>
         )}
       </div>
+      <FileViewerDialog file={viewer} onOpenChange={(open) => !open && setViewer(null)} />
     </div>
   );
 }
 
 async function downloadAttachment(url: string, filename: string) {
   try {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename;
-    a.rel = "noopener";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    await saveFile(url, filename);
   } catch {
-    window.open(url, "_blank");
+    toast.error("Speichern ist in dieser App nicht möglich");
   }
 }
 
-function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
+function AttachmentChip({ att, dark, onOpen }: { att: Attachment; dark: boolean; onOpen: (file: ViewableFile) => void }) {
   const Icon = att.kind === "image" ? FileImage : att.kind === "pptx" ? Presentation : FileText;
 
   // For generated images, show preview
