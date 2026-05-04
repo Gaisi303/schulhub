@@ -50,14 +50,6 @@ function fmtSize(n: number) {
   return `${(n / 1024 / 1024).toFixed(1)} MB`;
 }
 
-async function downloadBlob(blob: Blob, name: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = name;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
 export function TaskAttachments({ taskId }: { taskId: string }) {
   const { user } = useAuth();
   const [items, setItems] = useState<Attachment[]>([]);
