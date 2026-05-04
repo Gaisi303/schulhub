@@ -658,17 +658,31 @@ function AttachmentChip({ att, dark, onOpen }: { att: Attachment; dark: boolean;
   if (att.kind === "image" && att.downloadUrl) {
     return (
       <div className="space-y-1.5">
-        <img src={att.downloadUrl} alt={att.name} className="rounded-lg max-h-80 w-full object-cover" />
-        <button
-          type="button"
-          onClick={() => downloadAttachment(att.downloadUrl, att.name)}
-          className={cn(
-            "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors",
-            dark ? "bg-white/20 hover:bg-white/30" : "bg-muted hover:bg-muted/80"
-          )}
-        >
-          <Download className="h-3 w-3" /> Bild speichern
+        <button type="button" onClick={() => onOpen({ name: att.name, url: att.downloadUrl, mimeType: att.mimeType, source: att.downloadUrl })} className="block w-full overflow-hidden rounded-lg">
+          <img src={att.downloadUrl} alt={att.name} className="max-h-80 w-full object-cover transition-transform hover:scale-[1.01]" />
         </button>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            onClick={() => onOpen({ name: att.name, url: att.downloadUrl, mimeType: att.mimeType, source: att.downloadUrl })}
+            className={cn(
+              "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors",
+              dark ? "bg-white/20 hover:bg-white/30" : "bg-muted hover:bg-muted/80"
+            )}
+          >
+            <FileImage className="h-3 w-3" /> Öffnen
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadAttachment(att.downloadUrl, att.name)}
+            className={cn(
+              "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors",
+              dark ? "bg-white/20 hover:bg-white/30" : "bg-muted hover:bg-muted/80"
+            )}
+          >
+            <Download className="h-3 w-3" /> Speichern
+          </button>
+        </div>
       </div>
     );
   }
@@ -689,7 +703,7 @@ function AttachmentChip({ att, dark, onOpen }: { att: Attachment; dark: boolean;
   return (
     <button
       type="button"
-      onClick={() => downloadAttachment(att.downloadUrl, att.name)}
+      onClick={() => onOpen({ name: att.name, url: att.downloadUrl, mimeType: att.mimeType, source: att.downloadUrl })}
       className={cn(
         "flex items-center gap-2 text-xs px-3 py-2 rounded-lg border transition-colors text-left w-full",
         dark
@@ -705,9 +719,9 @@ function AttachmentChip({ att, dark, onOpen }: { att: Attachment; dark: boolean;
       </div>
       <div className="min-w-0 flex-1">
         <div className="font-medium truncate">{att.name}</div>
-        <div className={cn("text-[10px] opacity-70")}>{att.kind === "pptx" ? "PowerPoint" : "Word-Dokument"}</div>
+        <div className={cn("text-[10px] opacity-70")}>{att.kind === "pptx" ? "PowerPoint" : att.kind === "docx" ? "Word-Dokument" : "Datei öffnen"}</div>
       </div>
-      <Download className="h-3.5 w-3.5 shrink-0 opacity-70" />
+      <Download className="h-3.5 w-3.5 shrink-0 opacity-70" onClick={(e) => { e.stopPropagation(); downloadAttachment(att.downloadUrl, att.name); }} />
     </button>
   );
 }
