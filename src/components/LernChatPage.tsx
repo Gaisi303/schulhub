@@ -20,12 +20,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { extractFile, type ExtractedFile } from "@/lib/fileExtract";
+import { FileViewerDialog, type ViewableFile } from "@/components/FileViewerDialog";
+import { saveFile } from "@/lib/fileActions";
 
 type ContentPart =
   | { type: "text"; text: string }
   | { type: "image_url"; image_url: { url: string } };
 
-type Attachment = { name: string; downloadUrl: string; mimeType: string; kind: "image" | "docx" | "pptx" };
+type Attachment = { name: string; downloadUrl: string; mimeType: string; kind: "image" | "docx" | "pptx" | "pdf" | "text" | "file" };
 
 type Msg = {
   role: "user" | "assistant";
@@ -258,14 +260,17 @@ export function LernChatPage() {
       ...imgFiles.map((f) => ({ type: "image_url" as const, image_url: { url: f.dataUrl! } })),
       ...(userText ? [{ type: "text" as const, text: userText }] : []),
     ];
-    const docNames = docFiles.map((f) => f.name);
+    const visibleAttachments = attachedFiles.filter((f) => f.kind !== "image").map((f) => ({
+      name: f.name,
+      downloadUrl: f.dataUrl ?? "",
+      mimeType: f.mimeType || "application/octet-stream",
+      kind: f.kind === "pdf" || f.kind === "docx" || f.kind === "text" ? f.kind : "file" as const,
+    }));
 
     const displayMsg: Msg = {
       role: "user",
       content: visibleParts.length ? visibleParts : userText,
-      attachments: docNames.map((n) => ({
-        name: n, downloadUrl: "", mimeType: "application/octet-stream", kind: "docx" as const,
-      })),
+      attachments: visibleAttachments,
     };
 
     const newMessages = [...messages, { role: "user" as const, content: userContent }];
@@ -495,7 +500,7 @@ export function LernChatPage() {
             />
             <input
               ref={fileRef} type="file" multiple className="hidden"
-              accept="image/*,.pdf,.docx,.txt,.md,.csv"
+              accept="image/*,.pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.odt,.ods,.odp,.txt,.md,.csv,.json"
               onChange={(e) => { onPickFiles(e.target.files); e.target.value = ""; }}
             />
             <div className="flex items-center justify-between px-2 pb-2">
@@ -585,6 +590,7 @@ function EmptyState({ onPick }: { onPick: (s: string) => void }) {
 }
 
 function MessageBubble({ msg }: { msg: Msg }) {
+  const [viewer, setViewer] = useState<ViewableFile | null>(null);
   const text = typeof msg.content === "string"
     ? msg.content
     : msg.content.filter((p): p is Extract<ContentPart, { type: "text" }> => p.type === "text").map((p) => p.text).join("\n");
@@ -610,7 +616,9 @@ function MessageBubble({ msg }: { msg: Msg }) {
         {imgs.length > 0 && (
           <div className={cn("grid gap-1.5", imgs.length > 1 ? "grid-cols-2" : "grid-cols-1")}>
             {imgs.map((src, i) => (
-              <img key={i} src={src} alt="" className="rounded-lg max-h-64 w-full object-cover" />
+              <button key={i} type="button" onClick={() => setViewer({ name: `Bild-${i + 1}.png`, url: src, mimeType: "image/png", source: src })} className="min-w-0 overflow-hidden rounded-lg">
+                <img src={src} alt="" className="max-h-64 w-full object-cover transition-transform hover:scale-[1.01]" />
+              </button>
             ))}
           </div>
         )}
@@ -625,51 +633,56 @@ function MessageBubble({ msg }: { msg: Msg }) {
         {msg.attachments && msg.attachments.length > 0 && (
           <div className="space-y-1.5 pt-1">
             {msg.attachments.map((a, i) => (
-              <AttachmentChip key={i} att={a} dark={msg.role === "user"} />
+              <AttachmentChip key={i} att={a} dark={msg.role === "user"} onOpen={setViewer} />
             ))}
           </div>
         )}
       </div>
+      <FileViewerDialog file={viewer} onOpenChange={(open) => !open && setViewer(null)} />
     </div>
   );
 }
 
 async function downloadAttachment(url: string, filename: string) {
   try {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = filename;
-    a.rel = "noopener";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    await saveFile(url, filename);
   } catch {
-    window.open(url, "_blank");
+    toast.error("Speichern ist in dieser App nicht möglich");
   }
 }
 
-function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
+function AttachmentChip({ att, dark, onOpen }: { att: Attachment; dark: boolean; onOpen: (file: ViewableFile) => void }) {
   const Icon = att.kind === "image" ? FileImage : att.kind === "pptx" ? Presentation : FileText;
 
   // For generated images, show preview
   if (att.kind === "image" && att.downloadUrl) {
     return (
       <div className="space-y-1.5">
-        <img src={att.downloadUrl} alt={att.name} className="rounded-lg max-h-80 w-full object-cover" />
-        <button
-          type="button"
-          onClick={() => downloadAttachment(att.downloadUrl, att.name)}
-          className={cn(
-            "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors",
-            dark ? "bg-white/20 hover:bg-white/30" : "bg-muted hover:bg-muted/80"
-          )}
-        >
-          <Download className="h-3 w-3" /> Bild speichern
+        <button type="button" onClick={() => onOpen({ name: att.name, url: att.downloadUrl, mimeType: att.mimeType, source: att.downloadUrl })} className="block w-full overflow-hidden rounded-lg">
+          <img src={att.downloadUrl} alt={att.name} className="max-h-80 w-full object-cover transition-transform hover:scale-[1.01]" />
         </button>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            onClick={() => onOpen({ name: att.name, url: att.downloadUrl, mimeType: att.mimeType, source: att.downloadUrl })}
+            className={cn(
+              "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors",
+              dark ? "bg-white/20 hover:bg-white/30" : "bg-muted hover:bg-muted/80"
+            )}
+          >
+            <FileImage className="h-3 w-3" /> Öffnen
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadAttachment(att.downloadUrl, att.name)}
+            className={cn(
+              "inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-colors",
+              dark ? "bg-white/20 hover:bg-white/30" : "bg-muted hover:bg-muted/80"
+            )}
+          >
+            <Download className="h-3 w-3" /> Speichern
+          </button>
+        </div>
       </div>
     );
   }
@@ -690,7 +703,7 @@ function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
   return (
     <button
       type="button"
-      onClick={() => downloadAttachment(att.downloadUrl, att.name)}
+      onClick={() => onOpen({ name: att.name, url: att.downloadUrl, mimeType: att.mimeType, source: att.downloadUrl })}
       className={cn(
         "flex items-center gap-2 text-xs px-3 py-2 rounded-lg border transition-colors text-left w-full",
         dark
@@ -706,9 +719,9 @@ function AttachmentChip({ att, dark }: { att: Attachment; dark: boolean }) {
       </div>
       <div className="min-w-0 flex-1">
         <div className="font-medium truncate">{att.name}</div>
-        <div className={cn("text-[10px] opacity-70")}>{att.kind === "pptx" ? "PowerPoint" : "Word-Dokument"}</div>
+        <div className={cn("text-[10px] opacity-70")}>{att.kind === "pptx" ? "PowerPoint" : att.kind === "docx" ? "Word-Dokument" : "Datei öffnen"}</div>
       </div>
-      <Download className="h-3.5 w-3.5 shrink-0 opacity-70" />
+      <Download className="h-3.5 w-3.5 shrink-0 opacity-70" onClick={(e) => { e.stopPropagation(); downloadAttachment(att.downloadUrl, att.name); }} />
     </button>
   );
 }
