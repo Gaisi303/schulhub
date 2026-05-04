@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Download, ExternalLink, FileText } from "lucide-react";
+import mammoth from "mammoth";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { saveFile, type SavableSource } from "@/lib/fileActions";
+import { saveFile, sourceToBlob, type SavableSource } from "@/lib/fileActions";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -26,6 +28,28 @@ function isText(file?: ViewableFile | null) {
 
 export function FileViewerDialog({ file, onOpenChange }: { file: ViewableFile | null; onOpenChange: (open: boolean) => void }) {
   const open = !!file;
+  const [previewText, setPreviewText] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setPreviewText(null);
+    if (!file || isImage(file) || isPdf(file)) return;
+    const load = async () => {
+      try {
+        const blob = await sourceToBlob(file.source ?? file.url, file.mimeType);
+        let text: string | null = null;
+        if (isText(file)) text = await blob.text();
+        if (/\.docx$/i.test(file.name) || file.mimeType?.includes("wordprocessingml")) {
+          text = (await mammoth.extractRawText({ arrayBuffer: await blob.arrayBuffer() })).value.trim();
+        }
+        if (!cancelled) setPreviewText(text || null);
+      } catch {
+        if (!cancelled) setPreviewText(null);
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, [file]);
 
   const download = async () => {
     if (!file) return;
@@ -51,8 +75,10 @@ export function FileViewerDialog({ file, onOpenChange }: { file: ViewableFile | 
             <div className="flex min-h-full items-center justify-center">
               <img src={file.url} alt={file.name} className="max-h-full max-w-full rounded-lg object-contain" />
             </div>
-          ) : file && (isPdf(file) || isText(file)) ? (
+          ) : file && isPdf(file) ? (
             <iframe title={file.name} src={file.url} className="h-full min-h-[70vh] w-full rounded-lg border border-border/50 bg-background" />
+          ) : previewText ? (
+            <pre className="min-h-full whitespace-pre-wrap rounded-lg border border-border/50 bg-background p-4 text-sm leading-relaxed text-foreground">{previewText}</pre>
           ) : (
             <div className="flex h-full min-h-[60vh] flex-col items-center justify-center gap-3 text-center text-sm text-muted-foreground">
               <FileText className="h-10 w-10" />
