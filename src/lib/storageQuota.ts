@@ -8,12 +8,12 @@ export async function getUsedBytes(): Promise<number> {
   return Number(data) || 0;
 }
 
-export async function ensureCanUpload(extraBytes: number): Promise<{ ok: true } | { ok: false; used: number; limit: number }> {
+export interface QuotaCheck { ok: boolean; used: number; limit: number; }
+
+export async function ensureCanUpload(extraBytes: number): Promise<QuotaCheck> {
   const used = await getUsedBytes();
-  if (used + extraBytes > STORAGE_QUOTA_BYTES) {
-    return { ok: false, used, limit: STORAGE_QUOTA_BYTES };
-  }
-  return { ok: true };
+  const ok = used + extraBytes <= STORAGE_QUOTA_BYTES;
+  return { ok, used, limit: STORAGE_QUOTA_BYTES };
 }
 
 export function formatBytes(n: number): string {
