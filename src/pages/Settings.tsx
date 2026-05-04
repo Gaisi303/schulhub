@@ -171,6 +171,35 @@ export default function Settings() {
             </Button>
           </div>
         </div>
+
+        <div className="glass rounded-2xl p-6 space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="h-9 w-9 rounded-lg bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <HardDrive className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <h2 className="font-semibold">Speicher</h2>
+                <p className="text-xs text-muted-foreground">3 GB pro Konto für Cloud-Anhänge</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm" onClick={refreshUsage}>Aktualisieren</Button>
+          </div>
+          {usedBytes === null ? (
+            <p className="text-sm text-muted-foreground">Lade…</p>
+          ) : (
+            <div className="space-y-2">
+              <Progress value={Math.min(100, (usedBytes / STORAGE_QUOTA_BYTES) * 100)} className="h-2" />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>{formatBytes(usedBytes)} verbraucht</span>
+                <span>{formatBytes(STORAGE_QUOTA_BYTES)} insgesamt</span>
+              </div>
+              {usedBytes / STORAGE_QUOTA_BYTES > 0.9 && (
+                <p className="text-xs text-destructive">Speicher fast voll. Bitte nicht benötigte Anhänge löschen.</p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </AppLayout>
   );
