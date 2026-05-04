@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { ensureCanUpload, formatBytes } from "@/lib/storageQuota";
 
 export type SavableSource = Blob | string;
 
@@ -71,6 +72,12 @@ async function uploadAndSign(blob: Blob, filename: string, mime: string): Promis
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
+    const check = await ensureCanUpload(blob.size);
+    if (!check.ok) {
+      const { toast } = await import("sonner");
+      toast.error(`Speicher voll (${formatBytes(check.used)} / ${formatBytes(check.limit)}). Bitte Anhänge löschen.`);
+      return null;
+    }
     const path = `${user.id}/${Date.now()}-${crypto.randomUUID()}-${filename}`;
     const { error: upErr } = await supabase.storage.from("downloads").upload(path, blob, { contentType: mime, upsert: false });
     if (upErr) return null;

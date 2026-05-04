@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { FileViewerDialog, type ViewableFile } from "@/components/FileViewerDialog";
 import { saveFile } from "@/lib/fileActions";
+import { ensureCanUpload, formatBytes } from "@/lib/storageQuota";
 import { toast } from "sonner";
 
 interface Attachment {
@@ -87,6 +88,11 @@ export function TaskAttachments({ taskId }: { taskId: string }) {
       for (const file of Array.from(files)) {
         if (target === "cloud") {
           if (file.size > MAX_CLOUD_BYTES) { toast.error(`${file.name}: max 25 MB`); continue; }
+          const check = await ensureCanUpload(file.size);
+          if (!check.ok) {
+            toast.error(`Speicher voll: ${formatBytes(check.used)} / ${formatBytes(check.limit)} verbraucht`);
+            continue;
+          }
           const path = `${user.id}/${taskId}/${crypto.randomUUID()}-${file.name}`;
           const { error: upErr } = await supabase.storage.from("task-attachments").upload(path, file, { contentType: file.type });
           if (upErr) { toast.error(upErr.message); continue; }
