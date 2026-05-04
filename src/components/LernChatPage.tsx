@@ -20,12 +20,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { extractFile, type ExtractedFile } from "@/lib/fileExtract";
+import { FileViewerDialog, type ViewableFile } from "@/components/FileViewerDialog";
+import { saveFile } from "@/lib/fileActions";
 
 type ContentPart =
   | { type: "text"; text: string }
   | { type: "image_url"; image_url: { url: string } };
 
-type Attachment = { name: string; downloadUrl: string; mimeType: string; kind: "image" | "docx" | "pptx" };
+type Attachment = { name: string; downloadUrl: string; mimeType: string; kind: "image" | "docx" | "pptx" | "pdf" | "text" | "file" };
 
 type Msg = {
   role: "user" | "assistant";
@@ -258,14 +260,17 @@ export function LernChatPage() {
       ...imgFiles.map((f) => ({ type: "image_url" as const, image_url: { url: f.dataUrl! } })),
       ...(userText ? [{ type: "text" as const, text: userText }] : []),
     ];
-    const docNames = docFiles.map((f) => f.name);
+    const visibleAttachments = attachedFiles.filter((f) => f.kind !== "image").map((f) => ({
+      name: f.name,
+      downloadUrl: f.dataUrl ?? "",
+      mimeType: f.mimeType || "application/octet-stream",
+      kind: f.kind === "pdf" || f.kind === "docx" || f.kind === "text" ? f.kind : "file" as const,
+    }));
 
     const displayMsg: Msg = {
       role: "user",
       content: visibleParts.length ? visibleParts : userText,
-      attachments: docNames.map((n) => ({
-        name: n, downloadUrl: "", mimeType: "application/octet-stream", kind: "docx" as const,
-      })),
+      attachments: visibleAttachments,
     };
 
     const newMessages = [...messages, { role: "user" as const, content: userContent }];
@@ -495,7 +500,7 @@ export function LernChatPage() {
             />
             <input
               ref={fileRef} type="file" multiple className="hidden"
-              accept="image/*,.pdf,.docx,.txt,.md,.csv"
+              accept="image/*,.pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.odt,.ods,.odp,.txt,.md,.csv,.json"
               onChange={(e) => { onPickFiles(e.target.files); e.target.value = ""; }}
             />
             <div className="flex items-center justify-between px-2 pb-2">
