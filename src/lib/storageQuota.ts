@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export const STORAGE_QUOTA_BYTES = 3 * 1024 * 1024 * 1024; // 3 GB
+export const STORAGE_QUOTA_BYTES = 1.5 * 1024 * 1024 * 1024; // 1.5 GB
 
 export async function getUsedBytes(): Promise<number> {
   const { data, error } = await (supabase.rpc as any)("get_my_storage_usage");
