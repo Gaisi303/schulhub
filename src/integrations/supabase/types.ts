@@ -413,6 +413,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_my_storage_usage: { Args: never; Returns: number }
       get_user_storage_usage: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
