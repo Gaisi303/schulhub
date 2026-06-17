@@ -1,24 +1,42 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
-import { Calendar } from "@/components/ui/calendar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { TASK_TYPE_META, type TaskType } from "@/lib/constants";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import type { Task } from "@/components/TaskCard";
-import { format, isSameDay, parseISO } from "date-fns";
+import {
+  addDays,
+  addWeeks,
+  format,
+  isSameDay,
+  isToday,
+  parseISO,
+  startOfWeek,
+} from "date-fns";
 import { de } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, CalendarDays } from "lucide-react";
 
 type CalTask = Task & { task_type: TaskType };
+
+// pastel block colors per type (light, like the reference)
+const TYPE_BLOCK: Record<TaskType, string> = {
+  homework: "bg-blue-100 text-blue-900 border-blue-200 dark:bg-blue-500/20 dark:text-blue-100 dark:border-blue-400/30",
+  exam: "bg-rose-100 text-rose-900 border-rose-200 dark:bg-rose-500/20 dark:text-rose-100 dark:border-rose-400/30",
+  revision: "bg-amber-100 text-amber-900 border-amber-200 dark:bg-amber-500/20 dark:text-amber-100 dark:border-amber-400/30",
+  vocab: "bg-purple-100 text-purple-900 border-purple-200 dark:bg-purple-500/20 dark:text-purple-100 dark:border-purple-400/30",
+  other: "bg-emerald-100 text-emerald-900 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-100 dark:border-emerald-400/30",
+};
 
 export default function CalendarPage() {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<CalTask[]>([]);
-  const [selected, setSelected] = useState<Date>(new Date());
+  const [weekStart, setWeekStart] = useState<Date>(() =>
+    startOfWeek(new Date(), { weekStartsOn: 1 })
+  );
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Task | undefined>();
 
@@ -27,7 +45,14 @@ export default function CalendarPage() {
     const { data } = await supabase.from("tasks").select("*").eq("user_id", user.id);
     setTasks(((data as any[]) ?? []) as CalTask[]);
   };
-  useEffect(() => { load(); }, [user]);
+  useEffect(() => {
+    load();
+  }, [user]);
+
+  const days = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
+    [weekStart]
+  );
 
   const tasksByDay = useMemo(() => {
     const m = new Map<string, CalTask[]>();
@@ -39,123 +64,208 @@ export default function CalendarPage() {
     return m;
   }, [tasks]);
 
-  const dayTasks = useMemo(() => {
-    return tasks
-      .filter((t) => isSameDay(parseISO(t.due_date), selected))
-      .sort((a, b) => (a.task_type ?? "").localeCompare(b.task_type ?? ""));
-  }, [tasks, selected]);
-
-  const typeModifiers = useMemo(() => {
-    const mods: Record<string, Date[]> = {
-      homework: [], exam: [], revision: [], vocab: [], other: [],
-    };
-    for (const t of tasks) {
-      const d = parseISO(t.due_date);
-      const tt = (t.task_type ?? "other") as TaskType;
-      mods[tt].push(d);
-    }
-    return mods;
-  }, [tasks]);
+  const weekLabel = `${format(days[0], "dd.")} – ${format(days[6], "dd. MMMM yyyy", { locale: de })}`;
 
   return (
     <AppLayout>
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Kalender</h1>
-            <p className="text-muted-foreground text-sm mt-1">Prüfungen, Hausübungen & Deadlines im Überblick</p>
+          <div className="flex items-center gap-3">
+            <div className="h-11 w-11 rounded-2xl bg-gradient-primary grid place-items-center shadow-glow">
+              <CalendarDays className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-none">
+                {format(weekStart, "MMMM yyyy", { locale: de })}
+              </h1>
+              <p className="text-muted-foreground text-sm mt-1">{weekLabel}</p>
+            </div>
           </div>
-          <Button onClick={() => { setEditing(undefined); setOpen(true); }} className="bg-gradient-primary shadow-glow">
-            <Plus className="mr-1 h-4 w-4" /> Neuer Termin
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" onClick={() => setWeekStart(addWeeks(weekStart, -1))}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))}
+            >
+              Heute
+            </Button>
+            <Button variant="outline" size="icon" onClick={() => setWeekStart(addWeeks(weekStart, 1))}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              onClick={() => {
+                setEditing(undefined);
+                setOpen(true);
+              }}
+              className="bg-gradient-primary shadow-glow ml-1"
+            >
+              <Plus className="mr-1 h-4 w-4" /> Neu
+            </Button>
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-[auto,1fr] gap-6">
-          <div className="glass rounded-2xl p-4 w-fit mx-auto lg:mx-0">
-            <Calendar
-              mode="single"
-              selected={selected}
-              onSelect={(d) => d && setSelected(d)}
-              locale={de}
-              showOutsideDays
-              modifiers={typeModifiers}
-              modifiersClassNames={{
-                homework: "relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:h-1 after:w-1 after:rounded-full after:bg-blue-500",
-                exam: "relative font-bold ring-1 ring-red-500/60",
-                revision: "relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:h-1 after:w-1 after:rounded-full after:bg-amber-500",
-                vocab: "relative after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:h-1 after:w-1 after:rounded-full after:bg-purple-500",
-              }}
-              className={cn("p-2 pointer-events-auto")}
-            />
-            <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-              {(Object.keys(TASK_TYPE_META) as TaskType[]).map((k) => (
-                <div key={k} className="flex items-center gap-2">
-                  <span className={cn("h-2 w-2 rounded-full", TASK_TYPE_META[k].dot)} />
-                  <span className="text-muted-foreground">{TASK_TYPE_META[k].label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Legend */}
+        <div className="flex flex-wrap gap-2">
+          {(Object.keys(TASK_TYPE_META) as TaskType[]).map((k) => (
+            <span
+              key={k}
+              className={cn(
+                "text-xs px-2.5 py-1 rounded-full border inline-flex items-center gap-1.5",
+                TYPE_BLOCK[k]
+              )}
+            >
+              <span>{TASK_TYPE_META[k].emoji}</span>
+              {TASK_TYPE_META[k].label}
+            </span>
+          ))}
+        </div>
 
-          <div className="glass rounded-2xl p-5 space-y-3">
-            <h2 className="font-semibold text-lg">
-              {format(selected, "EEEE, dd. MMMM yyyy", { locale: de })}
-            </h2>
-            {dayTasks.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Keine Termine an diesem Tag. 🌿</p>
-            ) : (
-              <div className="space-y-2">
-                {dayTasks.map((t) => {
-                  const meta = TASK_TYPE_META[(t.task_type ?? "other") as TaskType];
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => { setEditing(t); setOpen(true); }}
-                      className="w-full text-left glass rounded-xl p-3 hover:bg-accent/40 transition flex items-start gap-3"
-                    >
-                      <span className="text-xl">{meta.emoji}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className={cn("font-medium", t.status === "done" && "line-through opacity-60")}>{t.title}</span>
-                          <Badge variant="outline" className={cn("text-[10px]", meta.className)}>{meta.label}</Badge>
-                          <Badge variant="outline" className="text-[10px]">{t.subject}</Badge>
-                        </div>
-                        {t.description && (
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{t.description}</p>
-                        )}
+        {/* Week grid */}
+        <div className="glass rounded-3xl p-3 md:p-4 overflow-x-auto">
+          <div className="grid grid-cols-7 gap-2 md:gap-3 min-w-[760px]">
+            {days.map((day) => {
+              const key = format(day, "yyyy-MM-dd");
+              const dayTasks = (tasksByDay.get(key) ?? []).sort((a, b) =>
+                (a.task_type ?? "").localeCompare(b.task_type ?? "")
+              );
+              const today = isToday(day);
+              return (
+                <div
+                  key={key}
+                  className={cn(
+                    "rounded-2xl border border-border/50 bg-card/40 flex flex-col min-h-[420px] overflow-hidden",
+                    today && "ring-2 ring-primary/60"
+                  )}
+                >
+                  {/* Day header */}
+                  <button
+                    onClick={() => {
+                      setEditing(undefined);
+                      setOpen(true);
+                    }}
+                    className={cn(
+                      "px-3 py-2 text-left border-b border-border/50 flex items-center justify-between hover:bg-accent/40 transition",
+                      today && "bg-primary/10"
+                    )}
+                  >
+                    <div>
+                      <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+                        {format(day, "EEE", { locale: de })}
                       </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            <div className="pt-4 border-t border-border/40">
-              <h3 className="text-sm font-semibold mb-2">Nächste Termine</h3>
-              <div className="space-y-1.5">
-                {tasks
-                  .filter((t) => parseISO(t.due_date) >= new Date(new Date().setHours(0,0,0,0)) && t.status !== "done")
-                  .sort((a, b) => a.due_date.localeCompare(b.due_date))
-                  .slice(0, 6)
-                  .map((t) => {
-                    const meta = TASK_TYPE_META[(t.task_type ?? "other") as TaskType];
-                    return (
-                      <button
-                        key={t.id}
-                        onClick={() => setSelected(parseISO(t.due_date))}
-                        className="w-full text-left flex items-center gap-2 text-sm hover:bg-accent/30 rounded-lg px-2 py-1.5 transition"
+                      <div
+                        className={cn(
+                          "text-lg font-bold leading-none mt-0.5",
+                          today && "text-primary"
+                        )}
                       >
-                        <span className={cn("h-2 w-2 rounded-full shrink-0", meta.dot)} />
-                        <span className="text-muted-foreground tabular-nums shrink-0 text-xs">{format(parseISO(t.due_date), "dd.MM.")}</span>
-                        <span className="truncate">{t.title}</span>
-                      </button>
-                    );
-                  })}
-                {tasks.filter((t) => parseISO(t.due_date) >= new Date(new Date().setHours(0,0,0,0)) && t.status !== "done").length === 0 && (
-                  <p className="text-xs text-muted-foreground">Keine offenen Termine.</p>
-                )}
-              </div>
-            </div>
+                        {format(day, "d")}
+                      </div>
+                    </div>
+                    {dayTasks.length > 0 && (
+                      <Badge variant="secondary" className="text-[10px] h-5">
+                        {dayTasks.length}
+                      </Badge>
+                    )}
+                  </button>
+
+                  {/* Events */}
+                  <div className="flex-1 p-2 space-y-1.5">
+                    {dayTasks.length === 0 ? (
+                      <div className="h-full grid place-items-center text-[11px] text-muted-foreground/60 italic">
+                        —
+                      </div>
+                    ) : (
+                      dayTasks.map((t) => {
+                        const tt = (t.task_type ?? "other") as TaskType;
+                        const meta = TASK_TYPE_META[tt];
+                        return (
+                          <button
+                            key={t.id}
+                            onClick={() => {
+                              setEditing(t);
+                              setOpen(true);
+                            }}
+                            className={cn(
+                              "w-full text-left rounded-xl border px-2.5 py-2 transition hover:scale-[1.02] hover:shadow-md",
+                              TYPE_BLOCK[tt],
+                              t.status === "done" && "opacity-60"
+                            )}
+                          >
+                            <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide opacity-80">
+                              <span>{meta.emoji}</span>
+                              <span className="truncate">{meta.label}</span>
+                            </div>
+                            <div
+                              className={cn(
+                                "text-xs font-semibold mt-1 line-clamp-2 leading-snug",
+                                t.status === "done" && "line-through"
+                              )}
+                            >
+                              {t.title}
+                            </div>
+                            <div className="text-[10px] mt-1 opacity-70 truncate">
+                              {t.subject}
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Upcoming */}
+        <div className="glass rounded-2xl p-5">
+          <h3 className="text-sm font-semibold mb-3">Nächste Termine</h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {tasks
+              .filter(
+                (t) =>
+                  parseISO(t.due_date) >= new Date(new Date().setHours(0, 0, 0, 0)) &&
+                  t.status !== "done"
+              )
+              .sort((a, b) => a.due_date.localeCompare(b.due_date))
+              .slice(0, 6)
+              .map((t) => {
+                const tt = (t.task_type ?? "other") as TaskType;
+                const meta = TASK_TYPE_META[tt];
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => {
+                      setWeekStart(startOfWeek(parseISO(t.due_date), { weekStartsOn: 1 }));
+                    }}
+                    className={cn(
+                      "text-left rounded-xl border px-3 py-2.5 transition hover:scale-[1.01]",
+                      TYPE_BLOCK[tt]
+                    )}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-semibold uppercase tracking-wide opacity-80">
+                        {meta.emoji} {meta.label}
+                      </span>
+                      <span className="text-[10px] opacity-70 tabular-nums">
+                        {format(parseISO(t.due_date), "EEE dd.MM.", { locale: de })}
+                      </span>
+                    </div>
+                    <div className="text-sm font-semibold mt-1 truncate">{t.title}</div>
+                    <div className="text-[10px] opacity-70 truncate">{t.subject}</div>
+                  </button>
+                );
+              })}
+            {tasks.filter(
+              (t) =>
+                parseISO(t.due_date) >= new Date(new Date().setHours(0, 0, 0, 0)) &&
+                t.status !== "done"
+            ).length === 0 && (
+              <p className="text-xs text-muted-foreground">Keine offenen Termine.</p>
+            )}
           </div>
         </div>
       </div>
