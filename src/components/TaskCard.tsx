@@ -15,6 +15,7 @@ export interface Task {
   priority: "low" | "medium" | "high";
   status: "open" | "in_progress" | "done";
   description: string | null;
+  task_type?: "homework" | "exam" | "revision" | "vocab" | "other";
 }
 
 interface Props {
