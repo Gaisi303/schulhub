@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { SUBJECTS } from "@/lib/constants";
+import { SUBJECTS, TASK_TYPE_META } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ const schema = z.object({
   due_date: z.date({ required_error: "Datum wählen" }),
   priority: z.enum(["low", "medium", "high"]),
   status: z.enum(["open", "in_progress", "done"]),
+  task_type: z.enum(["homework", "exam", "revision", "vocab", "other"]),
   description: z.string().max(1000).optional(),
 });
 
@@ -49,6 +50,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
       due_date: new Date(),
       priority: "medium",
       status: "open",
+      task_type: "homework",
       description: "",
     },
   });
@@ -61,6 +63,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
         due_date: new Date(task.due_date),
         priority: task.priority,
         status: task.status,
+        task_type: task.task_type ?? "other",
         description: task.description ?? "",
       });
     } else {
@@ -70,6 +73,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
         due_date: new Date(),
         priority: "medium",
         status: "open",
+        task_type: "homework",
         description: "",
       });
     }
@@ -85,6 +89,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
       due_date: format(vals.due_date, "yyyy-MM-dd"),
       priority: vals.priority,
       status: vals.status,
+      task_type: vals.task_type,
       description: vals.description || null,
       completed_at: vals.status === "done" ? new Date().toISOString() : null,
     };
@@ -177,6 +182,18 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Typ</Label>
+            <Select value={form.watch("task_type")} onValueChange={(v) => form.setValue("task_type", v as any)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent className="bg-popover">
+                {(Object.keys(TASK_TYPE_META) as Array<keyof typeof TASK_TYPE_META>).map((k) => (
+                  <SelectItem key={k} value={k}>{TASK_TYPE_META[k].emoji} {TASK_TYPE_META[k].label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

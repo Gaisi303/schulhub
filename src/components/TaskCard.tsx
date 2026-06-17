@@ -4,7 +4,7 @@ import { de } from "date-fns/locale";
 import { Check, Clock, Pencil, Trash2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PRIORITY_META, STATUS_META, SUBJECT_COLORS } from "@/lib/constants";
+import { PRIORITY_META, STATUS_META, SUBJECT_COLORS, TASK_TYPE_META } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export interface Task {
@@ -15,6 +15,7 @@ export interface Task {
   priority: "low" | "medium" | "high";
   status: "open" | "in_progress" | "done";
   description: string | null;
+  task_type?: "homework" | "exam" | "revision" | "vocab" | "other";
 }
 
 interface Props {
@@ -82,6 +83,11 @@ export function TaskCard({ task, onToggle, onEdit, onDelete }: Props) {
             <Badge variant="outline" className="text-[10px] border-border/50 font-medium">
               {task.subject}
             </Badge>
+            {task.task_type && (
+              <Badge variant="outline" className={cn("text-[10px]", TASK_TYPE_META[task.task_type].className)}>
+                {TASK_TYPE_META[task.task_type].emoji} {TASK_TYPE_META[task.task_type].label}
+              </Badge>
+            )}
             <Badge variant="outline" className={cn("text-[10px]", PRIORITY_META[task.priority].className)}>
               {PRIORITY_META[task.priority].label}
             </Badge>

@@ -72,5 +72,15 @@ export const STATUS_META = {
   done: { label: "Erledigt", className: "bg-success/15 text-success" },
 } as const;
 
+export const TASK_TYPE_META = {
+  homework: { label: "Hausübung", emoji: "📝", className: "bg-blue-500/15 text-blue-500 border-blue-500/30", dot: "bg-blue-500" },
+  exam: { label: "Prüfung", emoji: "📚", className: "bg-red-500/15 text-red-500 border-red-500/30", dot: "bg-red-500" },
+  revision: { label: "Wiederholung", emoji: "🔁", className: "bg-amber-500/15 text-amber-500 border-amber-500/30", dot: "bg-amber-500" },
+  vocab: { label: "Vokabel", emoji: "🗣️", className: "bg-purple-500/15 text-purple-500 border-purple-500/30", dot: "bg-purple-500" },
+  other: { label: "Sonstiges", emoji: "📌", className: "bg-muted text-muted-foreground border-border", dot: "bg-muted-foreground" },
+} as const;
+
+export type TaskType = keyof typeof TASK_TYPE_META;
+
 export const TIMETABLE_URL = "https://gymzwettl.webuntis.com/timetable/my-student?date=2026-04-27";
 export const MEAL_URL = "https://www.gymnasium-zwettl.ac.at/essen/essen.php?login=1";

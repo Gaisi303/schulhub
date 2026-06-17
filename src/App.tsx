@@ -13,6 +13,7 @@ import Mindmaps from "./pages/Mindmaps";
 import MindmapEditor from "./pages/MindmapEditor";
 import GradeCalculator from "./pages/GradeCalculator";
 import Settings from "./pages/Settings";
+import CalendarPage from "./pages/CalendarPage";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/aufgaben" element={<Tasks />} />
             <Route path="/fortschritt" element={<Progress />} />
+            <Route path="/kalender" element={<CalendarPage />} />
             <Route path="/notenberechnung" element={<GradeCalculator />} />
             <Route path="/lern-ai" element={<LernAI />} />
             <Route path="/notizen" element={<Notes />} />
