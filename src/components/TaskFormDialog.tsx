@@ -3,12 +3,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -16,17 +17,19 @@ import { cn } from "@/lib/utils";
 import { SUBJECTS, TASK_TYPE_META } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useArea } from "@/hooks/useArea";
 import { toast } from "sonner";
 import { TaskAttachments } from "./TaskAttachments";
 
 const schema = z.object({
   title: z.string().trim().min(1, "Titel erforderlich").max(120),
-  subject: z.string().min(1, "Fach wählen"),
+  subject: z.string().min(1, "Kategorie wählen"),
   due_date: z.date({ required_error: "Datum wählen" }),
   priority: z.enum(["low", "medium", "high"]),
   status: z.enum(["open", "in_progress", "done"]),
   task_type: z.enum(["homework", "exam", "revision", "vocab", "other"]),
   description: z.string().max(1000).optional(),
+  important: z.boolean().optional(),
 });
 
 type FormVals = z.infer<typeof schema>;
@@ -38,20 +41,28 @@ interface Props {
   onSaved?: () => void;
 }
 
+const PRIVATE_CATEGORIES = ["Allgemein", "Haushalt", "Familie", "Finanzen", "Termine", "Gesundheit", "Einkauf", "Sonstiges"];
+
 export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
   const { user } = useAuth();
+  const { area } = useArea();
   const [submitting, setSubmitting] = useState(false);
+  const isPrivate = area === "private";
+
+  const categories = isPrivate ? PRIVATE_CATEGORIES : SUBJECTS;
+  const defaultSubject = isPrivate ? "Allgemein" : "Mathematik";
 
   const form = useForm<FormVals>({
     resolver: zodResolver(schema),
     defaultValues: {
       title: "",
-      subject: "Mathematik",
+      subject: defaultSubject,
       due_date: new Date(),
       priority: "medium",
       status: "open",
-      task_type: "homework",
+      task_type: isPrivate ? "other" : "homework",
       description: "",
+      important: false,
     },
   });
 
@@ -65,24 +76,27 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
         status: task.status,
         task_type: task.task_type ?? "other",
         description: task.description ?? "",
+        important: !!task.important,
       });
     } else {
       form.reset({
         title: "",
-        subject: "Mathematik",
+        subject: defaultSubject,
         due_date: new Date(),
         priority: "medium",
         status: "open",
-        task_type: "homework",
+        task_type: isPrivate ? "other" : "homework",
         description: "",
+        important: false,
       });
     }
-  }, [task, open, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task, open, area]);
 
   const onSubmit = async (vals: FormVals) => {
     if (!user) return;
     setSubmitting(true);
-    const payload = {
+    const payload: any = {
       user_id: user.id,
       title: vals.title,
       subject: vals.subject,
@@ -91,6 +105,8 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
       status: vals.status,
       task_type: vals.task_type,
       description: vals.description || null,
+      important: !!vals.important,
+      area,
       completed_at: vals.status === "done" ? new Date().toISOString() : null,
     };
 
@@ -117,7 +133,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title">Titel</Label>
-            <Input id="title" {...form.register("title")} placeholder="z.B. Buchpräsentation vorbereiten" />
+            <Input id="title" {...form.register("title")} placeholder={isPrivate ? "z.B. Müll rausbringen" : "z.B. Buchpräsentation vorbereiten"} />
             {form.formState.errors.title && (
               <p className="text-xs text-destructive">{form.formState.errors.title.message}</p>
             )}
@@ -125,11 +141,11 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label>Fach</Label>
+              <Label>{isPrivate ? "Kategorie" : "Fach"}</Label>
               <Select value={form.watch("subject")} onValueChange={(v) => form.setValue("subject", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent className="bg-popover">
-                  {SUBJECTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  {categories.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
@@ -195,6 +211,18 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
               </SelectContent>
             </Select>
           </div>
+
+          <label className="flex items-center gap-3 rounded-xl border-2 border-warning/30 bg-warning/5 p-3 cursor-pointer hover:bg-warning/10 transition-colors">
+            <Checkbox
+              checked={!!form.watch("important")}
+              onCheckedChange={(v) => form.setValue("important", !!v)}
+            />
+            <Star className={cn("h-4 w-4", form.watch("important") ? "fill-warning text-warning" : "text-muted-foreground")} />
+            <div className="flex-1">
+              <div className="text-sm font-medium">Extra wichtig</div>
+              <div className="text-xs text-muted-foreground">Banner oben 5 Tage vor Deadline</div>
+            </div>
+          </label>
 
           <div className="space-y-2">
             <Label htmlFor="desc">Notizen (optional)</Label>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CalendarDays, ExternalLink, Plus, Trophy, AlertTriangle, ListChecks, Sparkles } from "lucide-react";
+import { CalendarDays, ExternalLink, Plus, Trophy, AlertTriangle, ListChecks, Sparkles, Link2, ChefHat, NotebookPen, Home as HomeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppLayout } from "@/components/AppLayout";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
@@ -10,12 +10,15 @@ import { MealCard } from "@/components/MealCard";
 import { useMealReminder } from "@/hooks/useMealReminder";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useArea } from "@/hooks/useArea";
 import { TIMETABLE_URL } from "@/lib/constants";
 import { addDays, isToday, isWithinInterval, parseISO, startOfWeek, endOfWeek } from "date-fns";
 import { toast } from "sonner";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { area } = useArea();
+  const isPrivate = area === "private";
   const [tasks, setTasks] = useState<Task[]>([]);
   const { enabled: mealEnabled } = useMealReminder();
   const [profile, setProfile] = useState<{ display_name: string | null } | null>(null);
@@ -27,6 +30,7 @@ export default function Dashboard() {
       .from("tasks")
       .select("*")
       .eq("user_id", user.id)
+      .eq("area", area)
       .order("due_date");
     setTasks((data as Task[]) ?? []);
   };
@@ -40,7 +44,8 @@ export default function Dashboard() {
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => setProfile(data));
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, area]);
 
   const greeting = (() => {
     const h = new Date().getHours();
@@ -49,7 +54,7 @@ export default function Dashboard() {
     return "Guten Abend";
   })();
 
-  const name = profile?.display_name || user?.email?.split("@")[0] || "Schüler:in";
+  const name = profile?.display_name || user?.email?.split("@")[0] || (isPrivate ? "" : "Schüler:in");
   const todayTasks = tasks.filter((t) => isToday(parseISO(t.due_date)) && t.status !== "done");
   const upcoming = tasks.filter((t) =>
     t.status !== "done" &&
@@ -84,9 +89,11 @@ export default function Dashboard() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-            {greeting}, <span className="gradient-text">{name}</span>! 👋
+            {greeting}{name && <>, <span className="gradient-text">{name}</span></>}! 👋
           </h1>
-          <p className="text-muted-foreground mt-1">Hier ist dein Überblick für heute.</p>
+          <p className="text-muted-foreground mt-1">
+            {isPrivate ? "Dein privater Überblick." : "Hier ist dein Überblick für heute."}
+          </p>
         </motion.div>
 
         {/* Stats grid */}
@@ -98,43 +105,51 @@ export default function Dashboard() {
         </div>
 
         {/* Action cards */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <a
-            href={TIMETABLE_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="glass rounded-2xl p-5 flex items-center gap-4 hover:shadow-glow transition-all group"
-          >
-            <div className="h-12 w-12 rounded-xl bg-gradient-accent flex items-center justify-center shrink-0">
-              <CalendarDays className="h-6 w-6 text-accent-foreground" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold">Stundenplan öffnen</h3>
-              <p className="text-xs text-muted-foreground">WebUntis – aktueller Plan</p>
-            </div>
-            <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
-          </a>
+        {isPrivate ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <QuickLink to="/haushalts-ai" icon={<ChefHat className="h-6 w-6" />} title="Haushalts-AI" desc="Frag bei allem rund um den Haushalt" />
+            <QuickLink to="/links" icon={<Link2 className="h-6 w-6" />} title="Links" desc="Sammlung mit KI-Suche" />
+            <QuickLink to="/notizen" icon={<NotebookPen className="h-6 w-6" />} title="Notizen" desc="Private Notizen & Ordner" />
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-4">
+            <a
+              href={TIMETABLE_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="glass rounded-2xl p-5 flex items-center gap-4 hover:shadow-glow transition-all group"
+            >
+              <div className="h-12 w-12 rounded-xl bg-gradient-accent flex items-center justify-center shrink-0">
+                <CalendarDays className="h-6 w-6 text-accent-foreground" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold">Stundenplan öffnen</h3>
+                <p className="text-xs text-muted-foreground">WebUntis – aktueller Plan</p>
+              </div>
+              <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+            </a>
 
-          <Link
-            to="/fortschritt"
-            className="glass rounded-2xl p-5 flex items-center gap-4 hover:shadow-glow transition-all group"
-          >
-            <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center shrink-0">
-              <Trophy className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold">Lernfortschritt</h3>
-              <p className="text-xs text-muted-foreground">Noten & Statistik je Fach</p>
-            </div>
-          </Link>
-        </div>
+            <Link
+              to="/fortschritt"
+              className="glass rounded-2xl p-5 flex items-center gap-4 hover:shadow-glow transition-all group"
+            >
+              <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center shrink-0">
+                <Trophy className="h-6 w-6 text-primary-foreground" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold">Lernfortschritt</h3>
+                <p className="text-xs text-muted-foreground">Noten & Statistik je Fach</p>
+              </div>
+            </Link>
+          </div>
+        )}
 
-        {/* Meal reminder card */}
-        {mealEnabled && <MealCard />}
+        {/* Meal reminder card – only school */}
+        {!isPrivate && mealEnabled && <MealCard />}
 
         {/* Today + Upcoming */}
         <div className="grid lg:grid-cols-2 gap-6">
-          <Section title="Heute fällig" empty="Nichts für heute – genieße den Tag! ☕">
+          <Section title="Heute fällig" empty={isPrivate ? "Nichts heute zu erledigen ✨" : "Nichts für heute – genieße den Tag! ☕"}>
             {todayTasks.map((t) => (
               <TaskCard key={t.id} task={t} onToggle={toggle} onEdit={() => {}} onDelete={remove} />
             ))}
@@ -160,6 +175,20 @@ export default function Dashboard() {
 
       <TaskFormDialog open={open} onOpenChange={setOpen} onSaved={load} />
     </AppLayout>
+  );
+}
+
+function QuickLink({ to, icon, title, desc }: { to: string; icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <Link to={to} className="glass rounded-2xl p-5 flex items-center gap-4 hover:shadow-glow transition-all group">
+      <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center shrink-0 text-primary-foreground">
+        {icon}
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-semibold">{title}</h3>
+        <p className="text-xs text-muted-foreground truncate">{desc}</p>
+      </div>
+    </Link>
   );
 }
 

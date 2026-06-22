@@ -9,11 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useArea } from "@/hooks/useArea";
 import { SUBJECTS } from "@/lib/constants";
 import { toast } from "sonner";
 
+const PRIVATE_CATEGORIES = ["Allgemein", "Haushalt", "Familie", "Finanzen", "Termine", "Gesundheit", "Einkauf", "Sonstiges"];
+
 export default function Tasks() {
   const { user } = useAuth();
+  const { area } = useArea();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Task | undefined>();
@@ -23,12 +27,14 @@ export default function Tasks() {
   const [fPriority, setFPriority] = useState("all");
   const [sort, setSort] = useState<"due" | "subject" | "priority">("due");
 
+  const subjects = area === "private" ? PRIVATE_CATEGORIES : SUBJECTS;
+
   const load = async () => {
     if (!user) return;
-    const { data } = await supabase.from("tasks").select("*").eq("user_id", user.id);
+    const { data } = await supabase.from("tasks").select("*").eq("user_id", user.id).eq("area", area);
     setTasks((data as Task[]) ?? []);
   };
-  useEffect(() => { load(); }, [user]);
+  useEffect(() => { setFSubject("all"); load(); }, [user, area]);
 
   const filtered = useMemo(() => {
     let arr = [...tasks];
@@ -54,6 +60,11 @@ export default function Tasks() {
     load();
   };
   const edit = (t: Task) => { setEditing(t); setOpen(true); };
+  const toggleImportant = async (t: Task) => {
+    await supabase.from("tasks").update({ important: !t.important }).eq("id", t.id);
+    toast.success(!t.important ? "Als wichtig markiert ⭐" : "Wichtig entfernt");
+    load();
+  };
 
   return (
     <AppLayout>
@@ -75,10 +86,10 @@ export default function Tasks() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             <Select value={fSubject} onValueChange={setFSubject}>
-              <SelectTrigger><SelectValue placeholder="Fach" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={area === "private" ? "Kategorie" : "Fach"} /></SelectTrigger>
               <SelectContent className="bg-popover">
-                <SelectItem value="all">Alle Fächer</SelectItem>
-                {SUBJECTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                <SelectItem value="all">{area === "private" ? "Alle Kategorien" : "Alle Fächer"}</SelectItem>
+                {subjects.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={fStatus} onValueChange={setFStatus}>
@@ -113,7 +124,7 @@ export default function Tasks() {
         <div className="grid md:grid-cols-2 gap-3">
           <AnimatePresence mode="popLayout">
             {filtered.map((t) => (
-              <TaskCard key={t.id} task={t} onToggle={toggle} onEdit={edit} onDelete={remove} />
+              <TaskCard key={t.id} task={t} onToggle={toggle} onEdit={edit} onDelete={remove} onToggleImportant={toggleImportant} />
             ))}
           </AnimatePresence>
         </div>
