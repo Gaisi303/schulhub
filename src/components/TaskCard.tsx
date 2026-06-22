@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { format, isPast, isToday, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
-import { Check, Clock, Pencil, Trash2, AlertCircle } from "lucide-react";
+import { Check, Clock, Pencil, Trash2, AlertCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PRIORITY_META, STATUS_META, SUBJECT_COLORS, TASK_TYPE_META } from "@/lib/constants";
@@ -16,6 +16,8 @@ export interface Task {
   status: "open" | "in_progress" | "done";
   description: string | null;
   task_type?: "homework" | "exam" | "revision" | "vocab" | "other";
+  important?: boolean;
+  area?: "school" | "private";
 }
 
 interface Props {
@@ -23,9 +25,10 @@ interface Props {
   onToggle: (t: Task) => void;
   onEdit: (t: Task) => void;
   onDelete: (t: Task) => void;
+  onToggleImportant?: (t: Task) => void;
 }
 
-export function TaskCard({ task, onToggle, onEdit, onDelete }: Props) {
+export function TaskCard({ task, onToggle, onEdit, onDelete, onToggleImportant }: Props) {
   const due = parseISO(task.due_date);
   const overdue = task.status !== "done" && isPast(due) && !isToday(due);
   const today = isToday(due);
@@ -42,6 +45,7 @@ export function TaskCard({ task, onToggle, onEdit, onDelete }: Props) {
       className={cn(
         "glass rounded-2xl p-4 relative overflow-hidden group",
         overdue && "ring-2 ring-destructive/60",
+        task.important && !done && "ring-2 ring-warning/60",
         done && "opacity-60"
       )}
     >
@@ -64,8 +68,22 @@ export function TaskCard({ task, onToggle, onEdit, onDelete }: Props) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <h3 className={cn("font-semibold leading-tight", done && "line-through")}>{task.title}</h3>
+            <h3 className={cn("font-semibold leading-tight flex items-center gap-1.5", done && "line-through")}>
+              {task.important && <Star className="h-3.5 w-3.5 fill-warning text-warning shrink-0" />}
+              <span>{task.title}</span>
+            </h3>
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {onToggleImportant && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className={cn("h-7 w-7", task.important && "text-warning")}
+                  onClick={() => onToggleImportant(task)}
+                  title={task.important ? "Wichtig entfernen" : "Als wichtig markieren"}
+                >
+                  <Star className={cn("h-3.5 w-3.5", task.important && "fill-warning")} />
+                </Button>
+              )}
               <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onEdit(task)}>
                 <Pencil className="h-3.5 w-3.5" />
               </Button>
