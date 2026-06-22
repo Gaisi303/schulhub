@@ -51,6 +51,7 @@ export type Database = {
       }
       chat_sessions: {
         Row: {
+          area: Database["public"]["Enums"]["app_area"]
           created_at: string
           id: string
           title: string
@@ -58,6 +59,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          area?: Database["public"]["Enums"]["app_area"]
           created_at?: string
           id?: string
           title?: string
@@ -65,6 +67,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          area?: Database["public"]["Enums"]["app_area"]
           created_at?: string
           id?: string
           title?: string
@@ -228,6 +231,7 @@ export type Database = {
       }
       notes: {
         Row: {
+          area: Database["public"]["Enums"]["app_area"]
           content: string
           created_at: string
           folder: string | null
@@ -238,6 +242,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          area?: Database["public"]["Enums"]["app_area"]
           content?: string
           created_at?: string
           folder?: string | null
@@ -248,6 +253,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          area?: Database["public"]["Enums"]["app_area"]
           content?: string
           created_at?: string
           folder?: string | null
@@ -288,6 +294,51 @@ export type Database = {
           meal_reminder_enabled?: boolean
           meal_url?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_links: {
+        Row: {
+          area: Database["public"]["Enums"]["app_area"]
+          created_at: string
+          description: string | null
+          favicon: string | null
+          folder: string | null
+          id: string
+          summary: string | null
+          tags: string[]
+          title: string | null
+          updated_at: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          area?: Database["public"]["Enums"]["app_area"]
+          created_at?: string
+          description?: string | null
+          favicon?: string | null
+          folder?: string | null
+          id?: string
+          summary?: string | null
+          tags?: string[]
+          title?: string | null
+          updated_at?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          area?: Database["public"]["Enums"]["app_area"]
+          created_at?: string
+          description?: string | null
+          favicon?: string | null
+          folder?: string | null
+          id?: string
+          summary?: string | null
+          tags?: string[]
+          title?: string | null
+          updated_at?: string
+          url?: string
           user_id?: string
         }
         Relationships: []
@@ -368,11 +419,13 @@ export type Database = {
       }
       tasks: {
         Row: {
+          area: Database["public"]["Enums"]["app_area"]
           completed_at: string | null
           created_at: string
           description: string | null
           due_date: string
           id: string
+          important: boolean
           priority: Database["public"]["Enums"]["task_priority"]
           status: Database["public"]["Enums"]["task_status"]
           subject: string
@@ -382,11 +435,13 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          area?: Database["public"]["Enums"]["app_area"]
           completed_at?: string | null
           created_at?: string
           description?: string | null
           due_date: string
           id?: string
+          important?: boolean
           priority?: Database["public"]["Enums"]["task_priority"]
           status?: Database["public"]["Enums"]["task_status"]
           subject: string
@@ -396,11 +451,13 @@ export type Database = {
           user_id: string
         }
         Update: {
+          area?: Database["public"]["Enums"]["app_area"]
           completed_at?: string | null
           created_at?: string
           description?: string | null
           due_date?: string
           id?: string
+          important?: boolean
           priority?: Database["public"]["Enums"]["task_priority"]
           status?: Database["public"]["Enums"]["task_status"]
           subject?: string
@@ -420,6 +477,7 @@ export type Database = {
       get_user_storage_usage: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
+      app_area: "school" | "private"
       task_priority: "low" | "medium" | "high"
       task_status: "open" | "in_progress" | "done"
       task_type: "homework" | "exam" | "revision" | "vocab" | "other"
@@ -550,6 +608,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_area: ["school", "private"],
       task_priority: ["low", "medium", "high"],
       task_status: ["open", "in_progress", "done"],
       task_type: ["homework", "exam", "revision", "vocab", "other"],
