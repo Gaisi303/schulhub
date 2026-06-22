@@ -116,6 +116,79 @@
     --shadow-card: 0 4px 32px -8px hsl(0 0% 0% / 0.4);
     --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.3);
   }
+
+  /* ====== Private area theme: Emerald & Cream ====== */
+  :root[data-area="private"] {
+    --primary: 158 84% 22%;
+    --primary-foreground: 48 33% 96%;
+    --primary-glow: 160 70% 45%;
+    --accent: 158 64% 52%;
+    --accent-foreground: 158 84% 12%;
+    --ring: 158 84% 30%;
+    --sidebar-primary: 158 84% 22%;
+    --sidebar-primary-foreground: 48 33% 96%;
+    --sidebar-ring: 158 84% 30%;
+    --gradient-primary: linear-gradient(135deg, hsl(158 84% 22%), hsl(160 70% 40%));
+    --gradient-accent: linear-gradient(135deg, hsl(160 70% 45%), hsl(170 65% 50%));
+    --gradient-mesh: radial-gradient(at 20% 0%, hsl(158 84% 30% / 0.15) 0px, transparent 50%),
+                     radial-gradient(at 80% 50%, hsl(48 60% 80% / 0.18) 0px, transparent 50%),
+                     radial-gradient(at 50% 100%, hsl(160 70% 45% / 0.10) 0px, transparent 50%);
+    --shadow-glow: 0 10px 40px -10px hsl(158 84% 30% / 0.45);
+    --background: 48 33% 97%;
+    --foreground: 158 35% 10%;
+    --muted: 48 25% 92%;
+    --muted-foreground: 158 18% 38%;
+    --card: 48 30% 99%;
+    --card-foreground: 158 35% 10%;
+    --card-glass: 48 33% 97% / 0.75;
+    --border: 158 20% 85%;
+    --input: 158 18% 88%;
+    --secondary: 48 25% 92%;
+    --secondary-foreground: 158 35% 10%;
+    --popover: 48 33% 99%;
+    --popover-foreground: 158 35% 10%;
+    --sidebar-background: 48 33% 97%;
+    --sidebar-foreground: 158 35% 12%;
+    --sidebar-accent: 48 25% 92%;
+    --sidebar-accent-foreground: 158 35% 10%;
+    --sidebar-border: 158 20% 85%;
+  }
+
+  .dark[data-area="private"] {
+    --primary: 160 75% 55%;
+    --primary-foreground: 158 84% 8%;
+    --primary-glow: 158 90% 65%;
+    --accent: 158 70% 50%;
+    --accent-foreground: 158 84% 8%;
+    --ring: 160 75% 55%;
+    --background: 158 40% 6%;
+    --foreground: 48 30% 94%;
+    --card: 158 35% 10%;
+    --card-foreground: 48 30% 94%;
+    --card-glass: 158 35% 12% / 0.55;
+    --muted: 158 30% 14%;
+    --muted-foreground: 48 18% 70%;
+    --border: 158 30% 18%;
+    --input: 158 30% 16%;
+    --secondary: 158 30% 16%;
+    --secondary-foreground: 48 30% 94%;
+    --popover: 158 35% 10%;
+    --popover-foreground: 48 30% 94%;
+    --sidebar-background: 158 40% 8%;
+    --sidebar-foreground: 48 30% 94%;
+    --sidebar-primary: 160 75% 55%;
+    --sidebar-primary-foreground: 158 84% 8%;
+    --sidebar-accent: 158 30% 14%;
+    --sidebar-accent-foreground: 48 30% 94%;
+    --sidebar-border: 158 30% 16%;
+    --sidebar-ring: 160 75% 55%;
+    --gradient-primary: linear-gradient(135deg, hsl(160 75% 50%), hsl(158 90% 60%));
+    --gradient-accent: linear-gradient(135deg, hsl(158 70% 50%), hsl(170 65% 55%));
+    --gradient-mesh: radial-gradient(at 15% 10%, hsl(160 75% 35% / 0.25) 0px, transparent 50%),
+                     radial-gradient(at 85% 30%, hsl(158 90% 40% / 0.18) 0px, transparent 50%),
+                     radial-gradient(at 50% 100%, hsl(48 50% 50% / 0.10) 0px, transparent 50%);
+    --shadow-glow: 0 10px 50px -10px hsl(160 75% 50% / 0.5);
+  }
 }
 
 @layer base {
