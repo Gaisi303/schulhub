@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useArea } from "@/hooks/useArea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -37,6 +38,7 @@ const NONE = "__none__";
 
 export default function Notes() {
   const { user } = useAuth();
+  const { area } = useArea();
   const [notes, setNotes] = useState<Note[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -64,17 +66,18 @@ export default function Notes() {
       .from("notes")
       .select("*")
       .eq("user_id", user.id)
+      .eq("area", area)
       .order("updated_at", { ascending: false });
     setNotes((data as Note[]) ?? []);
   };
-  useEffect(() => { load(); }, [user]);
+  useEffect(() => { setActiveId(null); setExtraFolders([]); setSelectedFolder(ALL); load(); }, [user, area]);
 
   const createNote = async () => {
     if (!user) return;
     const folder = selectedFolder !== ALL && selectedFolder !== NONE ? selectedFolder : null;
     const { data, error } = await supabase
       .from("notes")
-      .insert({ user_id: user.id, title: "Neue Notiz", content: "", folder })
+      .insert({ user_id: user.id, title: "Neue Notiz", content: "", folder, area })
       .select()
       .single();
     if (error || !data) { toast.error("Konnte nicht erstellen"); return; }

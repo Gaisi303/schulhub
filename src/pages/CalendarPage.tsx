@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useArea } from "@/hooks/useArea";
 import { TASK_TYPE_META, type TaskType } from "@/lib/constants";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import type { Task } from "@/components/TaskCard";
@@ -33,6 +34,7 @@ const TYPE_BLOCK: Record<TaskType, string> = {
 
 export default function CalendarPage() {
   const { user } = useAuth();
+  const { area } = useArea();
   const [tasks, setTasks] = useState<CalTask[]>([]);
   const [weekStart, setWeekStart] = useState<Date>(() =>
     startOfWeek(new Date(), { weekStartsOn: 1 })
@@ -42,12 +44,12 @@ export default function CalendarPage() {
 
   const load = async () => {
     if (!user) return;
-    const { data } = await supabase.from("tasks").select("*").eq("user_id", user.id);
+    const { data } = await supabase.from("tasks").select("*").eq("user_id", user.id).eq("area", area);
     setTasks(((data as any[]) ?? []) as CalTask[]);
   };
   useEffect(() => {
     load();
-  }, [user]);
+  }, [user, area]);
 
   const days = useMemo(
     () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
