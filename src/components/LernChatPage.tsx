@@ -59,6 +59,7 @@ export function LernChatPage() {
       .from("chat_sessions")
       .select("id, title, updated_at")
       .eq("user_id", user.id)
+      .eq("area", "school")
       .order("updated_at", { ascending: false });
     setSessions((data as Session[]) ?? []);
   };
@@ -124,7 +125,7 @@ export function LernChatPage() {
     const title = titleHint.slice(0, 50) || "Neue Unterhaltung";
     const { data, error } = await supabase
       .from("chat_sessions")
-      .insert({ user_id: user.id, title })
+      .insert({ user_id: user.id, title, area: "school" })
       .select("id, title, updated_at")
       .single();
     if (error || !data) { toast.error("Konnte Unterhaltung nicht erstellen"); return null; }
