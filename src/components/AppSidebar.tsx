@@ -1,5 +1,8 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, ListChecks, TrendingUp, Settings, GraduationCap, Sparkles, NotebookPen, Network, Calculator, CalendarDays } from "lucide-react";
+import {
+  LayoutDashboard, ListChecks, TrendingUp, Settings, GraduationCap, Sparkles,
+  NotebookPen, Network, Calculator, CalendarDays, Home, Link2, ChefHat,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,8 +14,9 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useArea } from "@/hooks/useArea";
 
-const items = [
+const schoolItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Aufgaben", url: "/aufgaben", icon: ListChecks },
   { title: "Lernfortschritt", url: "/fortschritt", icon: TrendingUp },
@@ -24,24 +28,46 @@ const items = [
   { title: "Einstellungen", url: "/einstellungen", icon: Settings },
 ];
 
+const privateItems = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Aufgaben", url: "/aufgaben", icon: ListChecks },
+  { title: "Kalender", url: "/kalender", icon: CalendarDays },
+  { title: "Notizen", url: "/notizen", icon: NotebookPen },
+  { title: "Links", url: "/links", icon: Link2 },
+  { title: "Haushalts-AI", url: "/haushalts-ai", icon: ChefHat },
+  { title: "Einstellungen", url: "/einstellungen", icon: Settings },
+];
+
 export function AppSidebar() {
   const { state } = useSidebar();
+  const { area } = useArea();
   const collapsed = state === "collapsed";
   const { pathname } = useLocation();
   const isActive = (path: string) =>
     path === "/" ? pathname === "/" : pathname.startsWith(path);
+
+  const items = area === "private" ? privateItems : schoolItems;
+  const isPrivate = area === "private";
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-primary shadow-glow">
-            <GraduationCap className="h-5 w-5 text-primary-foreground" />
+            {isPrivate ? (
+              <Home className="h-5 w-5 text-primary-foreground" />
+            ) : (
+              <GraduationCap className="h-5 w-5 text-primary-foreground" />
+            )}
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-base font-bold tracking-tight gradient-text">SchulHub</span>
-              <span className="text-[10px] text-muted-foreground">Dein Schulbegleiter</span>
+              <span className="text-base font-bold tracking-tight gradient-text">
+                {isPrivate ? "PrivatHub" : "SchulHub"}
+              </span>
+              <span className="text-[10px] text-muted-foreground">
+                {isPrivate ? "Dein privater Bereich" : "Dein Schulbegleiter"}
+              </span>
             </div>
           )}
         </div>
