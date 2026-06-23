@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ChefHat, Loader2, MessageSquare, Plus, Send, Trash2 } from "lucide-react";
+import { Bookmark, ChefHat, Loader2, MessageSquare, Plus, Send, Trash2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
