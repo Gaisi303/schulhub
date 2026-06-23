@@ -60,7 +60,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
       due_date: new Date(),
       priority: "medium",
       status: "open",
-      task_type: isPrivate ? "other" : "homework",
+      task_type: isPrivate ? "appointment" : "homework",
       description: "",
       important: false,
     },
