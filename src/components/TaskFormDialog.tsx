@@ -205,7 +205,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
             <Select value={form.watch("task_type")} onValueChange={(v) => form.setValue("task_type", v as any)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent className="bg-popover">
-                {(Object.keys(TASK_TYPE_META) as Array<keyof typeof TASK_TYPE_META>).map((k) => (
+                {(isPrivate ? PRIVATE_TASK_TYPES : SCHOOL_TASK_TYPES).map((k) => (
                   <SelectItem key={k} value={k}>{TASK_TYPE_META[k].emoji} {TASK_TYPE_META[k].label}</SelectItem>
                 ))}
               </SelectContent>
