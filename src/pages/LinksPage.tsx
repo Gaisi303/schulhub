@@ -17,13 +17,15 @@ import { cn } from "@/lib/utils";
 
 interface SavedLink {
   id: string;
-  url: string;
+  url: string | null;
   title: string | null;
   description: string | null;
   summary: string | null;
+  content: string | null;
   tags: string[];
   favicon: string | null;
   folder: string | null;
+  kind: "link" | "tip";
   created_at: string;
 }
 
