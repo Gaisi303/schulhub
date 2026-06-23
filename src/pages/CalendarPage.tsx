@@ -29,7 +29,14 @@ const TYPE_BLOCK: Record<TaskType, string> = {
   exam: "bg-rose-100 text-rose-900 border-rose-200 dark:bg-rose-500/20 dark:text-rose-100 dark:border-rose-400/30",
   revision: "bg-amber-100 text-amber-900 border-amber-200 dark:bg-amber-500/20 dark:text-amber-100 dark:border-amber-400/30",
   vocab: "bg-purple-100 text-purple-900 border-purple-200 dark:bg-purple-500/20 dark:text-purple-100 dark:border-purple-400/30",
-  other: "bg-emerald-100 text-emerald-900 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-100 dark:border-emerald-400/30",
+  appointment: "bg-sky-100 text-sky-900 border-sky-200 dark:bg-sky-500/20 dark:text-sky-100 dark:border-sky-400/30",
+  meeting: "bg-pink-100 text-pink-900 border-pink-200 dark:bg-pink-500/20 dark:text-pink-100 dark:border-pink-400/30",
+  errand: "bg-emerald-100 text-emerald-900 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-100 dark:border-emerald-400/30",
+  health: "bg-rose-100 text-rose-900 border-rose-200 dark:bg-rose-500/20 dark:text-rose-100 dark:border-rose-400/30",
+  finance: "bg-yellow-100 text-yellow-900 border-yellow-200 dark:bg-yellow-500/20 dark:text-yellow-100 dark:border-yellow-400/30",
+  household: "bg-teal-100 text-teal-900 border-teal-200 dark:bg-teal-500/20 dark:text-teal-100 dark:border-teal-400/30",
+  personal: "bg-violet-100 text-violet-900 border-violet-200 dark:bg-violet-500/20 dark:text-violet-100 dark:border-violet-400/30",
+  other: "bg-stone-100 text-stone-900 border-stone-200 dark:bg-stone-500/20 dark:text-stone-100 dark:border-stone-400/30",
 };
 
 export default function CalendarPage() {
