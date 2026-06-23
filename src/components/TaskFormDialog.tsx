@@ -27,7 +27,7 @@ const schema = z.object({
   due_date: z.date({ required_error: "Datum wählen" }),
   priority: z.enum(["low", "medium", "high"]),
   status: z.enum(["open", "in_progress", "done"]),
-  task_type: z.enum(["homework", "exam", "revision", "vocab", "other"]),
+  task_type: z.enum(["homework", "exam", "revision", "vocab", "appointment", "meeting", "errand", "health", "finance", "household", "personal", "other"]),
   description: z.string().max(1000).optional(),
   important: z.boolean().optional(),
 });
