@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useArea } from "@/hooks/useArea";
-import { TASK_TYPE_META, type TaskType } from "@/lib/constants";
+import { TASK_TYPE_META, type TaskType, SCHOOL_TASK_TYPES, PRIVATE_TASK_TYPES } from "@/lib/constants";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import type { Task } from "@/components/TaskCard";
 import {
