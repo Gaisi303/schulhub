@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Link2, Plus, Search, Sparkles, ExternalLink, Trash2, Loader2, X, Tag } from "lucide-react";
+import { Link2, Plus, Search, Sparkles, ExternalLink, Trash2, Loader2, X, Tag, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
