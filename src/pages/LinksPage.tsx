@@ -150,6 +150,7 @@ export default function LinksPage() {
         (l.title ?? "").toLowerCase().includes(q) ||
         (l.url ?? "").toLowerCase().includes(q) ||
         (l.summary ?? "").toLowerCase().includes(q) ||
+        (l.content ?? "").toLowerCase().includes(q) ||
         (l.description ?? "").toLowerCase().includes(q) ||
         l.tags.some((t) => t.toLowerCase().includes(q))
       )
