@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { SUBJECTS, TASK_TYPE_META } from "@/lib/constants";
+import { SUBJECTS, TASK_TYPE_META, SCHOOL_TASK_TYPES, PRIVATE_TASK_TYPES } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useArea } from "@/hooks/useArea";
