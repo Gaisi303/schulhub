@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { SUBJECTS, TASK_TYPE_META } from "@/lib/constants";
+import { SUBJECTS, TASK_TYPE_META, SCHOOL_TASK_TYPES, PRIVATE_TASK_TYPES } from "@/lib/constants";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useArea } from "@/hooks/useArea";
@@ -27,7 +27,7 @@ const schema = z.object({
   due_date: z.date({ required_error: "Datum wählen" }),
   priority: z.enum(["low", "medium", "high"]),
   status: z.enum(["open", "in_progress", "done"]),
-  task_type: z.enum(["homework", "exam", "revision", "vocab", "other"]),
+  task_type: z.enum(["homework", "exam", "revision", "vocab", "appointment", "meeting", "errand", "health", "finance", "household", "personal", "other"]),
   description: z.string().max(1000).optional(),
   important: z.boolean().optional(),
 });
@@ -60,7 +60,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
       due_date: new Date(),
       priority: "medium",
       status: "open",
-      task_type: isPrivate ? "other" : "homework",
+      task_type: isPrivate ? "appointment" : "homework",
       description: "",
       important: false,
     },
@@ -85,7 +85,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
         due_date: new Date(),
         priority: "medium",
         status: "open",
-        task_type: isPrivate ? "other" : "homework",
+        task_type: isPrivate ? "appointment" : "homework",
         description: "",
         important: false,
       });
@@ -205,7 +205,7 @@ export function TaskFormDialog({ open, onOpenChange, task, onSaved }: Props) {
             <Select value={form.watch("task_type")} onValueChange={(v) => form.setValue("task_type", v as any)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent className="bg-popover">
-                {(Object.keys(TASK_TYPE_META) as Array<keyof typeof TASK_TYPE_META>).map((k) => (
+                {(isPrivate ? PRIVATE_TASK_TYPES : SCHOOL_TASK_TYPES).map((k) => (
                   <SelectItem key={k} value={k}>{TASK_TYPE_META[k].emoji} {TASK_TYPE_META[k].label}</SelectItem>
                 ))}
               </SelectContent>

@@ -301,44 +301,50 @@ export type Database = {
       saved_links: {
         Row: {
           area: Database["public"]["Enums"]["app_area"]
+          content: string | null
           created_at: string
           description: string | null
           favicon: string | null
           folder: string | null
           id: string
+          kind: string
           summary: string | null
           tags: string[]
           title: string | null
           updated_at: string
-          url: string
+          url: string | null
           user_id: string
         }
         Insert: {
           area?: Database["public"]["Enums"]["app_area"]
+          content?: string | null
           created_at?: string
           description?: string | null
           favicon?: string | null
           folder?: string | null
           id?: string
+          kind?: string
           summary?: string | null
           tags?: string[]
           title?: string | null
           updated_at?: string
-          url: string
+          url?: string | null
           user_id: string
         }
         Update: {
           area?: Database["public"]["Enums"]["app_area"]
+          content?: string | null
           created_at?: string
           description?: string | null
           favicon?: string | null
           folder?: string | null
           id?: string
+          kind?: string
           summary?: string | null
           tags?: string[]
           title?: string | null
           updated_at?: string
-          url?: string
+          url?: string | null
           user_id?: string
         }
         Relationships: []
@@ -480,7 +486,19 @@ export type Database = {
       app_area: "school" | "private"
       task_priority: "low" | "medium" | "high"
       task_status: "open" | "in_progress" | "done"
-      task_type: "homework" | "exam" | "revision" | "vocab" | "other"
+      task_type:
+        | "homework"
+        | "exam"
+        | "revision"
+        | "vocab"
+        | "other"
+        | "appointment"
+        | "meeting"
+        | "errand"
+        | "health"
+        | "finance"
+        | "household"
+        | "personal"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -611,7 +629,20 @@ export const Constants = {
       app_area: ["school", "private"],
       task_priority: ["low", "medium", "high"],
       task_status: ["open", "in_progress", "done"],
-      task_type: ["homework", "exam", "revision", "vocab", "other"],
+      task_type: [
+        "homework",
+        "exam",
+        "revision",
+        "vocab",
+        "other",
+        "appointment",
+        "meeting",
+        "errand",
+        "health",
+        "finance",
+        "household",
+        "personal",
+      ],
     },
   },
 } as const

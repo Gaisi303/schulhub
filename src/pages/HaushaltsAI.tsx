@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ChefHat, Loader2, MessageSquare, Plus, Send, Trash2 } from "lucide-react";
+import { Bookmark, ChefHat, Loader2, MessageSquare, Plus, Send, Trash2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -60,6 +60,29 @@ export default function HaushaltsAI() {
   }, [messages]);
 
   const newChat = () => { setActiveId(null); setMessages([]); };
+
+  const saveTip = async (content: string) => {
+    if (!user || !content.trim()) return;
+    // Derive a short title from the user's preceding question, or the first line.
+    let defaultTitle = "";
+    const idx = messages.findIndex((m) => m.role === "assistant" && m.content === content);
+    if (idx > 0) defaultTitle = messages[idx - 1]?.content ?? "";
+    if (!defaultTitle) defaultTitle = content.split("\n").find((l) => l.trim())?.replace(/[#*_>`-]/g, "").trim() ?? "KI-Tipp";
+    const title = window.prompt("Titel für diesen Tipp:", defaultTitle.slice(0, 80))?.trim();
+    if (!title) return;
+    const { error } = await supabase.from("saved_links").insert({
+      user_id: user.id,
+      area: "private",
+      kind: "tip",
+      url: null,
+      title,
+      content,
+      summary: content.slice(0, 400),
+      tags: ["haushalt", "ki-tipp"],
+    } as any);
+    if (error) { toast.error("Konnte Tipp nicht speichern"); return; }
+    toast.success("Tipp bei Links gespeichert ✨");
+  };
 
   const deleteSession = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -255,9 +278,21 @@ export default function HaushaltsAI() {
                       : "bg-card border border-border/50 rounded-bl-sm"
                   )}>
                     {m.role === "assistant" ? (
-                      <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-headings:my-2">
-                        {m.content ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                      </div>
+                      <>
+                        <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-headings:my-2">
+                          {m.content ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                        </div>
+                        {m.content && !loading && (
+                          <button
+                            onClick={() => saveTip(m.content)}
+                            className="mt-2 -mb-1 inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-primary transition-colors px-1.5 py-0.5 rounded hover:bg-primary/10"
+                            title="Diesen Tipp bei Links speichern"
+                          >
+                            <Bookmark className="h-3 w-3" />
+                            Bei Links speichern
+                          </button>
+                        )}
+                      </>
                     ) : (
                       <p className="whitespace-pre-wrap">{m.content}</p>
                     )}

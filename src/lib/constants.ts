@@ -73,14 +73,27 @@ export const STATUS_META = {
 } as const;
 
 export const TASK_TYPE_META = {
+  // School
   homework: { label: "Hausübung", emoji: "📝", className: "bg-blue-500/15 text-blue-500 border-blue-500/30", dot: "bg-blue-500" },
   exam: { label: "Prüfung", emoji: "📚", className: "bg-red-500/15 text-red-500 border-red-500/30", dot: "bg-red-500" },
   revision: { label: "Wiederholung", emoji: "🔁", className: "bg-amber-500/15 text-amber-500 border-amber-500/30", dot: "bg-amber-500" },
   vocab: { label: "Vokabel", emoji: "🗣️", className: "bg-purple-500/15 text-purple-500 border-purple-500/30", dot: "bg-purple-500" },
+  // Private
+  appointment: { label: "Termin", emoji: "📅", className: "bg-sky-500/15 text-sky-600 border-sky-500/30", dot: "bg-sky-500" },
+  meeting: { label: "Verabredung", emoji: "🤝", className: "bg-pink-500/15 text-pink-500 border-pink-500/30", dot: "bg-pink-500" },
+  errand: { label: "Besorgung", emoji: "🛒", className: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30", dot: "bg-emerald-500" },
+  health: { label: "Gesundheit", emoji: "❤️", className: "bg-rose-500/15 text-rose-500 border-rose-500/30", dot: "bg-rose-500" },
+  finance: { label: "Finanzen", emoji: "💰", className: "bg-yellow-500/15 text-yellow-600 border-yellow-500/30", dot: "bg-yellow-500" },
+  household: { label: "Haushalt", emoji: "🏠", className: "bg-teal-500/15 text-teal-600 border-teal-500/30", dot: "bg-teal-500" },
+  personal: { label: "Persönlich", emoji: "✨", className: "bg-violet-500/15 text-violet-500 border-violet-500/30", dot: "bg-violet-500" },
+  // Shared
   other: { label: "Sonstiges", emoji: "📌", className: "bg-muted text-muted-foreground border-border", dot: "bg-muted-foreground" },
 } as const;
 
 export type TaskType = keyof typeof TASK_TYPE_META;
+
+export const SCHOOL_TASK_TYPES: TaskType[] = ["homework", "exam", "revision", "vocab", "other"];
+export const PRIVATE_TASK_TYPES: TaskType[] = ["appointment", "meeting", "errand", "household", "health", "finance", "personal", "other"];
 
 export const TIMETABLE_URL = "https://gymzwettl.webuntis.com/timetable/my-student?date=2026-04-27";
 export const MEAL_URL = "https://www.gymnasium-zwettl.ac.at/essen/essen.php?login=1";

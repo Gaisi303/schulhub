@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Link2, Plus, Search, Sparkles, ExternalLink, Trash2, Loader2, X, Tag } from "lucide-react";
+import { Link2, Plus, Search, Sparkles, ExternalLink, Trash2, Loader2, X, Tag, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { de } from "date-fns/locale";
@@ -17,13 +17,15 @@ import { cn } from "@/lib/utils";
 
 interface SavedLink {
   id: string;
-  url: string;
+  url: string | null;
   title: string | null;
   description: string | null;
   summary: string | null;
+  content: string | null;
   tags: string[];
   favicon: string | null;
   folder: string | null;
+  kind: "link" | "tip";
   created_at: string;
 }
 
@@ -119,7 +121,7 @@ export default function LinksPage() {
           query: q,
           links: links.map((l) => ({
             id: l.id, title: l.title, url: l.url,
-            description: l.description, summary: l.summary, tags: l.tags,
+            description: l.description, summary: l.summary ?? l.content, tags: l.tags,
           })),
         },
       });
@@ -148,6 +150,7 @@ export default function LinksPage() {
         (l.title ?? "").toLowerCase().includes(q) ||
         (l.url ?? "").toLowerCase().includes(q) ||
         (l.summary ?? "").toLowerCase().includes(q) ||
+        (l.content ?? "").toLowerCase().includes(q) ||
         (l.description ?? "").toLowerCase().includes(q) ||
         l.tags.some((t) => t.toLowerCase().includes(q))
       )
@@ -216,7 +219,11 @@ export default function LinksPage() {
                 className="glass rounded-2xl p-4 group flex flex-col gap-2"
               >
                 <div className="flex items-start gap-3">
-                  {l.favicon ? (
+                  {l.kind === "tip" ? (
+                    <div className="h-8 w-8 rounded-lg bg-gradient-accent grid place-items-center shrink-0">
+                      <Lightbulb className="h-4 w-4 text-accent-foreground" />
+                    </div>
+                  ) : l.favicon ? (
                     <img src={l.favicon} alt="" className="h-8 w-8 rounded-lg shrink-0 bg-background border border-border/50" />
                   ) : (
                     <div className="h-8 w-8 rounded-lg bg-gradient-primary grid place-items-center shrink-0">
@@ -224,29 +231,42 @@ export default function LinksPage() {
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <a
-                      href={l.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-semibold text-sm leading-tight hover:underline line-clamp-2 break-words"
-                    >
-                      {l.title || l.url}
-                    </a>
-                    <div className="text-[11px] text-muted-foreground truncate">{l.url}</div>
+                    {l.url ? (
+                      <a
+                        href={l.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-semibold text-sm leading-tight hover:underline line-clamp-2 break-words"
+                      >
+                        {l.title || l.url}
+                      </a>
+                    ) : (
+                      <div className="font-semibold text-sm leading-tight line-clamp-2 break-words">
+                        {l.title || "KI-Tipp"}
+                      </div>
+                    )}
+                    <div className="text-[11px] text-muted-foreground truncate">
+                      {l.url ?? (l.kind === "tip" ? "💡 KI-Tipp" : "")}
+                    </div>
                   </div>
                   <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                    <a href={l.url} target="_blank" rel="noreferrer" className="p-1.5 rounded hover:bg-muted" title="Öffnen">
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
+                    {l.url && (
+                      <a href={l.url} target="_blank" rel="noreferrer" className="p-1.5 rounded hover:bg-muted" title="Öffnen">
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    )}
                     <button onClick={() => remove(l.id)} className="p-1.5 rounded hover:bg-destructive/20 hover:text-destructive" title="Löschen">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
-                {l.summary && (
+                {l.content && (
+                  <p className="text-xs text-muted-foreground line-clamp-5 whitespace-pre-wrap">{l.content}</p>
+                )}
+                {l.summary && !l.content && (
                   <p className="text-xs text-muted-foreground line-clamp-3">{l.summary}</p>
                 )}
-                {l.description && !l.summary && (
+                {l.description && !l.summary && !l.content && (
                   <p className="text-xs text-muted-foreground line-clamp-2 italic">{l.description}</p>
                 )}
                 {l.tags.length > 0 && (
@@ -265,6 +285,7 @@ export default function LinksPage() {
                   </div>
                 )}
                 <div className="text-[10px] text-muted-foreground tabular-nums">
+                  {l.kind === "tip" && <span className="mr-1.5">💡 Tipp</span>}
                   {format(parseISO(l.created_at), "dd.MM.yyyy", { locale: de })}
                 </div>
               </motion.div>
