@@ -121,7 +121,7 @@ export default function LinksPage() {
           query: q,
           links: links.map((l) => ({
             id: l.id, title: l.title, url: l.url,
-            description: l.description, summary: l.summary, tags: l.tags,
+            description: l.description, summary: l.summary ?? l.content, tags: l.tags,
           })),
         },
       });
