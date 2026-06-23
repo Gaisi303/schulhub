@@ -278,9 +278,21 @@ export default function HaushaltsAI() {
                       : "bg-card border border-border/50 rounded-bl-sm"
                   )}>
                     {m.role === "assistant" ? (
-                      <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-headings:my-2">
-                        {m.content ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                      </div>
+                      <>
+                        <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-headings:my-2">
+                          {m.content ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown> : <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                        </div>
+                        {m.content && !loading && (
+                          <button
+                            onClick={() => saveTip(m.content)}
+                            className="mt-2 -mb-1 inline-flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-primary transition-colors px-1.5 py-0.5 rounded hover:bg-primary/10"
+                            title="Diesen Tipp bei Links speichern"
+                          >
+                            <Bookmark className="h-3 w-3" />
+                            Bei Links speichern
+                          </button>
+                        )}
+                      </>
                     ) : (
                       <p className="whitespace-pre-wrap">{m.content}</p>
                     )}
