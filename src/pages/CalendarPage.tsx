@@ -118,7 +118,7 @@ export default function CalendarPage() {
 
         {/* Legend */}
         <div className="flex flex-wrap gap-2">
-          {(Object.keys(TASK_TYPE_META) as TaskType[]).map((k) => (
+          {(area === "private" ? PRIVATE_TASK_TYPES : SCHOOL_TASK_TYPES).map((k) => (
             <span
               key={k}
               className={cn(
