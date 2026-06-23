@@ -61,6 +61,29 @@ export default function HaushaltsAI() {
 
   const newChat = () => { setActiveId(null); setMessages([]); };
 
+  const saveTip = async (content: string) => {
+    if (!user || !content.trim()) return;
+    // Derive a short title from the user's preceding question, or the first line.
+    let defaultTitle = "";
+    const idx = messages.findIndex((m) => m.role === "assistant" && m.content === content);
+    if (idx > 0) defaultTitle = messages[idx - 1]?.content ?? "";
+    if (!defaultTitle) defaultTitle = content.split("\n").find((l) => l.trim())?.replace(/[#*_>`-]/g, "").trim() ?? "KI-Tipp";
+    const title = window.prompt("Titel für diesen Tipp:", defaultTitle.slice(0, 80))?.trim();
+    if (!title) return;
+    const { error } = await supabase.from("saved_links").insert({
+      user_id: user.id,
+      area: "private",
+      kind: "tip",
+      url: null,
+      title,
+      content,
+      summary: content.slice(0, 400),
+      tags: ["haushalt", "ki-tipp"],
+    } as any);
+    if (error) { toast.error("Konnte Tipp nicht speichern"); return; }
+    toast.success("Tipp bei Links gespeichert ✨");
+  };
+
   const deleteSession = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     await supabase.from("chat_sessions").delete().eq("id", id);
