@@ -39,6 +39,7 @@ export default function LinksPage() {
   const [search, setSearch] = useState("");
   const [aiSearching, setAiSearching] = useState(false);
   const [aiResults, setAiResults] = useState<{ id: string; reason: string }[] | null>(null);
+  const [detail, setDetail] = useState<SavedLink | null>(null);
 
   const load = async () => {
     if (!user) return;
