@@ -262,13 +262,26 @@ export default function LinksPage() {
                   </div>
                 </div>
                 {l.content && (
-                  <p className="text-xs text-muted-foreground line-clamp-5 whitespace-pre-wrap">{l.content}</p>
+                  <button
+                    onClick={() => setDetail(l)}
+                    className="text-left text-xs text-muted-foreground line-clamp-5 whitespace-pre-wrap hover:text-foreground transition-colors"
+                  >
+                    {l.content}
+                  </button>
                 )}
                 {l.summary && !l.content && (
                   <p className="text-xs text-muted-foreground line-clamp-3">{l.summary}</p>
                 )}
                 {l.description && !l.summary && !l.content && (
                   <p className="text-xs text-muted-foreground line-clamp-2 italic">{l.description}</p>
+                )}
+                {l.kind === "tip" && l.content && (
+                  <button
+                    onClick={() => setDetail(l)}
+                    className="text-[11px] text-primary hover:underline self-start"
+                  >
+                    Ganzen Tipp lesen →
+                  </button>
                 )}
                 {l.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-auto">
