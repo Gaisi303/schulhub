@@ -341,6 +341,56 @@ export default function LinksPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
+        <DialogContent className="glass-strong max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 pr-6">
+              {detail?.kind === "tip" ? (
+                <Lightbulb className="h-5 w-5 text-primary shrink-0" />
+              ) : detail?.favicon ? (
+                <img src={detail.favicon} alt="" className="h-5 w-5 rounded shrink-0" />
+              ) : (
+                <Link2 className="h-5 w-5 shrink-0" />
+              )}
+              <span className="truncate">{detail?.title || "KI-Tipp"}</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="overflow-y-auto space-y-3 pr-1">
+            {detail?.url && (
+              <a
+                href={detail.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-primary hover:underline break-all flex items-center gap-1"
+              >
+                <ExternalLink className="h-3 w-3" /> {detail.url}
+              </a>
+            )}
+            {detail?.description && (
+              <p className="text-sm italic text-muted-foreground">{detail.description}</p>
+            )}
+            {detail?.content && (
+              <div className="text-sm whitespace-pre-wrap leading-relaxed">{detail.content}</div>
+            )}
+            {detail?.summary && (
+              <div className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{detail.summary}</div>
+            )}
+            {detail && detail.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 pt-2 border-t border-border/40">
+                {detail.tags.map((t) => (
+                  <Badge key={t} variant="outline" className="text-[10px] gap-1">
+                    <Tag className="h-2.5 w-2.5" /> {t}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDetail(null)}>Schließen</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 }
