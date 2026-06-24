@@ -39,6 +39,7 @@ export default function LinksPage() {
   const [search, setSearch] = useState("");
   const [aiSearching, setAiSearching] = useState(false);
   const [aiResults, setAiResults] = useState<{ id: string; reason: string }[] | null>(null);
+  const [detail, setDetail] = useState<SavedLink | null>(null);
 
   const load = async () => {
     if (!user) return;
@@ -261,13 +262,26 @@ export default function LinksPage() {
                   </div>
                 </div>
                 {l.content && (
-                  <p className="text-xs text-muted-foreground line-clamp-5 whitespace-pre-wrap">{l.content}</p>
+                  <button
+                    onClick={() => setDetail(l)}
+                    className="text-left text-xs text-muted-foreground line-clamp-5 whitespace-pre-wrap hover:text-foreground transition-colors"
+                  >
+                    {l.content}
+                  </button>
                 )}
                 {l.summary && !l.content && (
                   <p className="text-xs text-muted-foreground line-clamp-3">{l.summary}</p>
                 )}
                 {l.description && !l.summary && !l.content && (
                   <p className="text-xs text-muted-foreground line-clamp-2 italic">{l.description}</p>
+                )}
+                {l.kind === "tip" && l.content && (
+                  <button
+                    onClick={() => setDetail(l)}
+                    className="text-[11px] text-primary hover:underline self-start"
+                  >
+                    Ganzen Tipp lesen →
+                  </button>
                 )}
                 {l.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-auto">
@@ -324,6 +338,56 @@ export default function LinksPage() {
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Plus className="h-4 w-4 mr-1" />}
               Speichern
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
+        <DialogContent className="glass-strong max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 pr-6">
+              {detail?.kind === "tip" ? (
+                <Lightbulb className="h-5 w-5 text-primary shrink-0" />
+              ) : detail?.favicon ? (
+                <img src={detail.favicon} alt="" className="h-5 w-5 rounded shrink-0" />
+              ) : (
+                <Link2 className="h-5 w-5 shrink-0" />
+              )}
+              <span className="truncate">{detail?.title || "KI-Tipp"}</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="overflow-y-auto space-y-3 pr-1">
+            {detail?.url && (
+              <a
+                href={detail.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-primary hover:underline break-all flex items-center gap-1"
+              >
+                <ExternalLink className="h-3 w-3" /> {detail.url}
+              </a>
+            )}
+            {detail?.description && (
+              <p className="text-sm italic text-muted-foreground">{detail.description}</p>
+            )}
+            {detail?.content && (
+              <div className="text-sm whitespace-pre-wrap leading-relaxed">{detail.content}</div>
+            )}
+            {detail?.summary && (
+              <div className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{detail.summary}</div>
+            )}
+            {detail && detail.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 pt-2 border-t border-border/40">
+                {detail.tags.map((t) => (
+                  <Badge key={t} variant="outline" className="text-[10px] gap-1">
+                    <Tag className="h-2.5 w-2.5" /> {t}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setDetail(null)}>Schließen</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
